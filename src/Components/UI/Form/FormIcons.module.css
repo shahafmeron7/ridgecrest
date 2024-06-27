@@ -1,0 +1,36 @@
+.formIconsContainer {
+  display: flex;
+  gap: 40px;
+}
+.IconContainer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.IconContainer p {
+  color: var(--black-color-4);
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+@media only screen and (min-width: 375px) and (max-width:767px){
+  .formIconsContainer{
+    gap: 10px;
+  }
+  .IconContainer{
+    /* width: 344px; */
+   /* flex-direction: column; */
+   gap: 2px;
+  }
+  .IconContainer p {
+  font-size: 12px;
+  text-wrap: nowrap;
+  }
+  .IconContainer svg{
+    height: 24px;
+    width: 24px;
+  }
+  
+
+
+}

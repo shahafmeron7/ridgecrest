@@ -1,0 +1,105 @@
+.titleWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  color: var(--black-color-1);
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 40px;
+  text-align: center;
+}
+
+.titleDescription {
+  color: var(--black-color-2);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+  text-align: center;
+}
+.questionDescriptionText {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  color: var(--black-color-1);
+  text-align: center;
+}
+.questionInstructions{
+  color: var(--border-border-100, #99A5C5);
+
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; 
+}
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+ 
+  
+}
+.buttonsWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.prevBtn {
+  width: 56px;
+  height: 56px;
+  padding: 8px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--border-border-50);
+  background-color: transparent;
+  cursor: pointer;
+}
+.nextBtn {
+  display: flex;
+  width: 280px;
+  height: 56px;
+  padding: 8px 24px;
+  color:#fff;
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  font-size: 16px;
+  border: none;
+  background-color: var(--border-border-50);
+  /* transition: background-color 0.3ms ease-in; */
+}
+.enabled{
+  cursor: pointer;
+  background-color: var(--blue-color-1);
+  transition: background-color 0.5s ease-in-out;
+}
+.exitFadeOut{
+  animation: exitFadeOut 0.2s ease-out forwards;
+
+}
+.loaderWrapper{
+  display: flex;
+  align-items: center;
+  justify-content:center ;
+  flex-direction: column;
+  gap: 40px;
+}
+.loaderText{
+  color: var(--black-color-1);
+  font-size: 40px;
+  font-weight: 600;
+  text-align: center;
+}
+.loaderExtraInfoText{
+  color: var(--black-color-1);
+  font-size: 28px;
+  text-align: center;
+  font-weight: 400;
+}
+

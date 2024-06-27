@@ -1,0 +1,45 @@
+.progressContainer{
+    display: flex;
+    /* width: 100%; */
+    width: 700px;
+    justify-content: center;
+    align-items: center;
+}
+.progressWrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+    
+}
+.progressInfo{
+    font-size: 12px;
+    color: var(--black-color-1);
+    font-weight: 400;
+    line-height: 22px;
+
+}
+.lineWrapper{
+    height: 6px;
+    width: 100%;
+    border-radius: 8px;
+    background-color: var(--gray-color-1);
+    
+}
+/* .lineContainer{
+    width: 0%;
+    height: 6px;
+    border-radius: 8px;
+    transition: width 0.2s linear 0s;
+    background-color: var(--blue-color-1);
+} */
+@media only screen and (min-width: 375px) and (max-width:767px){
+    .progressContainer{
+      /* width: 344px;
+       */
+       /* width: calc(100% - 24px); */
+       width: 100%;
+    }
+
+  }

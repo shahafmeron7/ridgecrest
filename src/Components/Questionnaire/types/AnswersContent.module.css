@@ -1,0 +1,138 @@
+.finalStepTitleWrapper{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+.finalStepTitle{
+  color: var(--blue-color-1);
+  font-size: 32px;
+font-style: normal;
+font-weight: 700;
+line-height: 24px;
+}
+.answersContainer {
+  /* display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 8px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+  width: 100%;
+  /* flex:1; */
+  /* overflow-y: auto; */
+  /* max-height: calc(100% - 88px); */
+}
+.answerItem {
+  
+  display: flex;
+  flex-direction: column;
+  transition: outline 400ms ease-in-out;
+  outline: 2px solid var(--black-color-3);
+  border: 1px solid rgba(153, 165, 197, 0.5);
+  cursor: pointer;
+  border-radius: 8px;
+  border: 1px solid var(--gray-color-1);
+  background-color: #fff;
+}
+.selected {
+  outline: 2px solid var(--blue-color-1);
+  background-color: var(--selected-bg-color);
+}
+/* .answerItem:hover {
+  outline: 2px solid var(--blue-color-1);
+} */
+.listRow {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.listCol {
+  flex-direction: column;
+}
+
+.answerCardItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 220px;
+  padding: 8px;
+  gap: 8px;
+}
+.answerRowItem {
+  display: flex;
+  flex-direction: row-reverse;
+  height: 56px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 8px 24px;
+  gap: 13px;
+  justify-content: flex-end;
+}
+.inputsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 100%;
+}
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: center;
+  justify-self: center;
+  /* width: 100%; */
+}
+
+.rowChild {
+  width: 240px !important; 
+}
+.specialLayout {
+  display: flex;
+  flex-flow: wrap;
+  max-width: 500px;
+  justify-content: center;
+  gap: 19px;
+}
+.specialLayout input{
+  width: 100%;
+}
+.specialLayout > .inputWrapper:nth-child(3){
+  margin-top: 40px;
+}
+.specialLayout > #company_name{
+  /* width: 50%; */
+  /* width: 480px !important; */
+  width: 100% !important;
+}
+
+.specialLayout > #company_name >  .inputContainer{  
+  width: 100% !important;
+}
+.inputTitle {
+  color: var(--black-color-1);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+}
+.inputItem {
+  /* width: 100%; */
+}
+@media (min-width: 768px) {
+  .answerItem:hover {
+    outline: 2px solid var(--blue-color-1);
+  }
+}
+@media only screen and (min-width: 375px) and (max-width: 767px) {
+.inputsContainer{
+  gap:24px;
+}
+}
+
