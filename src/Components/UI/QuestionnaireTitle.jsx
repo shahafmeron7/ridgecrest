@@ -5,8 +5,8 @@ const QuestionnaireTitle = () => {
     const {currentQuestionCode} = useQuestionnaire();
     return (
       <div key={currentQuestionCode} className={`${styles.titleWrapper}`}>
-      <h1 className={styles.title}>Find the right payroll service provider</h1>
-      <h2 className={styles.titleDescription}>Just a few questions to find your match</h2>
+      <h1 className={styles.title}>Get Funded in a Few Easy Steps</h1>
+      {/* <h2 className={styles.titleDescription}>Just a few questions to find your match</h2> */}
     </div>
     );
   };

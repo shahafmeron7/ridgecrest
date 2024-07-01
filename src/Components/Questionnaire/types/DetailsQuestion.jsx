@@ -1,12 +1,14 @@
 import React from "react";
 import styles from "./AnswersContent.module.css";
-// import { useQuestionnaire } from "../../../context/QuestionnaireContext";
-import { useQuestionnaire } from "../../../context/QuestionnaireContext.jsx";
 
-import InputWithValidation from "../../UI/Form/InputWithValidation";
+import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 
-import useIsWideScreen from "../../../hooks/useIsWideScreen";
+import InputWithValidation from "@/components/UI/Form/InputWithValidation";
 
+import useIsWideScreen from "@/hooks/useIsWideScreen";
+import InputSelection from "@/components/UI/Form/InputSelection";
+import Dropdown from "@/components/UI/Form/Dropdown";
+import DateOfBirthInput from "../../UI/Form/inputs/DateOfBirthInput";
 const DetailsQuestion = () => {
   const { currentQuestion, responses, errResponses, currentQuestionCode } =
     useQuestionnaire();
@@ -45,11 +47,12 @@ const DetailsQuestion = () => {
             {isFinalStep ? (
               <FinalStepTitle text={sub.text} />
             ) : (
-              <h4 className={styles.inputTitle}>{sub.text}</h4>
+               <h4 className={styles.inputTitle}>{sub.text}</h4>
             )}
-
-            <InputWithValidation
+            {sub.element ==='input' || sub.element ==='free_text'  ? (
+              <InputWithValidation
               type="text"
+              inputType={sub.element}
               name={sub.code}
               value={responses[sub.code]?.answer || ""}
               placeholder={sub.example}
@@ -57,6 +60,25 @@ const DetailsQuestion = () => {
               errorMessage={sub.error}
               isError={errResponses[sub.code] || false}
             />
+            ): 
+            sub.element === "dropdown" ? (
+            <Dropdown subQuestion={sub}
+            selectedAnswerIndex={responses[sub.code]?.answerIndexes[0]}
+             />
+          ) :
+          sub.element ==="birthdate" ? (
+            <DateOfBirthInput
+                            selectedAnswerIndexes={responses[sub.code]?.answerIndexes || ""}
+            />
+          )
+           : 
+            (
+              <InputSelection subQuestion={sub}
+            selectedAnswerIndex={responses[sub.code]?.answerIndexes[0]}
+
+              />
+            )}
+            
             </div>
       ))}
     

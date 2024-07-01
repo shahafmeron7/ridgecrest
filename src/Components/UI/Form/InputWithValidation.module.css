@@ -1,27 +1,82 @@
 .inputContainer {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  position: relative;
   /* gap: 8px; */
 }
 
 .input {
-  padding: 8px 24px;
-  width: 488px;
+  padding: 8px 16px;
+  /* width: 488px; */
+  width: 100%;
   height: 56px;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: text;
-  font-weight: 700;
+  font-weight: 400;
   font-size: 16px;
   outline: 2px solid var(--black-color-3);
-  transition: outline 400ms ease-in-out;
-  border: 1px solid var(--gray-color-1);
+  transition: all 400ms ease-in-out;
+  border: 1px solid var(--grey-border-color);
 }
-.input:focus {
-  outline: 2px solid var(--blue-color-1);
+.textarea {
+  display: flex;
+  height: 96px;
+  resize: none;
+  overflow-y: auto;
+  font-size: 16px;
+  padding: 8px 16px;
+  
+  gap: 8px;
+  
+  border-radius: 12px;
+  transition: all 400ms ease-in-out;
+  outline: 2px solid var(--black-color-3);
+  border: 1px solid var(--grey-border-color);
+
 }
+
+.inputLabel {
+  position: absolute;
+  /* top: 16px; */
+  top: 50%;
+  transform: translateY(-50%);
+  left: 16px;
+  font-size: 16px;
+  color: #afb5bf;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.input:focus,.textarea:focus {
+  border-color: var(--focus-color);
+}
+
+
+
 .inputError:focus {
-  outline: 2px solid var(--err-color);
+  border-color: var(--err-color);
 }
+
+.input:focus + .inputLabel {
+  top: 0;
+  font-size: 12px;
+  color: var(--focus-color);
+  background: #fff;
+  padding: 0 4px;
+}
+
+.input:not(:placeholder-shown) + .inputLabel {
+  top: 0;
+  font-size: 12px;
+  background: #fff;
+  padding: 0 4px;
+}
+
+.inputError:focus + .inputLabel {
+  color: var(--err-color);
+}
+
 .errContainer {
   display: flex;
   gap: 8px;
@@ -33,63 +88,36 @@
   transition: all 400ms ease-in-out;
   /* visibility: hidden; */
 }
-.errContainer img{
+.errContainer img {
   margin-top: 5px;
 }
-.errContainer.notVisible{
+.errContainer.notVisible {
   height: 0;
   opacity: 0;
   margin-top: 0;
   transition: all 0.5s;
 }
-.errContainer.visible{
+.errContainer.visible {
   opacity: 1;
   /* height: 100%; */
 }
 
-.otherInput input{
+.otherInput input {
   border: 1px solid var(--blue-color-1);
   width: 100%;
   box-shadow: 0px 0px 4px 0px var(--blue-color-1);
 }
-.otherInput{
+.otherInput {
   margin-top: 8px;
   width: 100%;
 }
-.slideUpEntranceInput{
-  opacity: 1;
-  visibility: visible;
-  animation: slideUpEntranceInput 0.8s ease-in-out forwards;
 
-}
-@keyframes slideUpEntranceInput {
-  
-    
-  0% {
-      transform: translateY(-70px);
-      opacity: 0;
-  }
-
-  60% {
-      transform: translateY(10px);
-      opacity: 1;
-  }
-
-  100% {
-      transform: translateY(0);
-      opacity: 1;
-  }
-}
-
-@media only screen and (max-width:500px){
-  .inputContainer{
+@media only screen and (max-width: 500px) {
+  .inputContainer {
     width: 100%;
-      /* padding: 40px 16px 0px; */
+    /* padding: 40px 16px 0px; */
   }
-  .input{
+  .input {
     width: 100%;
   }
 }
-
-
-

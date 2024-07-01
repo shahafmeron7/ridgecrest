@@ -7,6 +7,7 @@ const InputWithValidation = React.forwardRef(
   (
     {
       type,
+      inputType,
       name,
       value,
       placeholder,
@@ -58,11 +59,24 @@ const InputWithValidation = React.forwardRef(
       }
     }, [isOther]);
 
+    const formatPhoneNumber = (value) => {
+      const phoneNumber = value.replace(/[^\d]/g, "");
+      const phoneNumberLength = phoneNumber.length;
+
+      if (phoneNumberLength < 4) return phoneNumber;
+      if (phoneNumberLength < 7) return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    };
+
     const handleChange = (e) => {
       const newValue = e.target.value;
-      setInputValue(newValue);
-      handleInputChange(name, newValue, isOther);
+      console.log(name)
+      const formattedValue = name === "phone" ? formatPhoneNumber(newValue) : newValue;
+
+      setInputValue(formattedValue);
+      handleInputChange(name, formattedValue, isOther);
     };
+
     return (
       <div
         className={`${styles.inputContainer} ${
@@ -70,6 +84,7 @@ const InputWithValidation = React.forwardRef(
         }`}
         style={name === "company_name" ? { width: "100%" } : {}}
       >
+      {inputType==='input' ? (
         <input
           data-lpignore="true"
           ref={ref}
@@ -82,6 +97,20 @@ const InputWithValidation = React.forwardRef(
           placeholder={placeholder}
           className={`${styles.input} ${error ? `${styles.inputError}` : ""}`}
         />
+
+      ):
+      (
+        <textarea
+          className={`${styles.textarea} ${error ? `${styles.inputError}` : ""}`}
+          value={inputValue}
+        onChange={handleChange}
+        maxLength={maxLength}
+        placeholder={placeholder}
+      />
+      )
+      }
+                {/* <label className={styles.inputLabel}>{placeholder}</label> */}
+
 
         <div
           className={`${styles.errContainer} ${

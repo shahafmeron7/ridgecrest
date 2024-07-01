@@ -5,19 +5,20 @@
 }
 
 .navbar{
-    padding: 8px 0px;
+    padding: 15px 0px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    justify-content: center;
 }
 .logosWrapper{
     display:flex;
-    gap:16px;
+    gap:8px;
     align-items:center;
 }
 @media only screen and (max-width: 767px) {
     .logosWrapper{
-      flex-direction: column;
+      /* flex-direction: column; */
       gap: 4px;
     }
     .logosWrapper img{

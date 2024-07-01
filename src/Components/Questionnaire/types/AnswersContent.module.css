@@ -78,14 +78,14 @@ line-height: 24px;
 .inputsContainer {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
   width: 100%;
 }
 .inputWrapper {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  align-items: center;
+  gap: 8px;
+  align-items: flex-start;
   justify-self: center;
   /* width: 100%; */
 }
@@ -117,10 +117,10 @@ line-height: 24px;
 }
 .inputTitle {
   color: var(--black-color-1);
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 18px;
+  font-weight: 500;
   line-height: 24px;
-  text-align: center;
+  /* text-align: center; */
 }
 .inputItem {
   /* width: 100%; */

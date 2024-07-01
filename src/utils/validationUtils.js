@@ -1,8 +1,3 @@
-// src/context/questionnaire/utils/validationUtils.js
-// export const validateResponse = (response) => {
-//     // Logic to validate the response
-//     return response !== ''; // Example validation
-// };
 
 function isValidZipCode(zipCode) {
     const regex = /^\d{5}(?:-\d{4})?$|^(\d{3} \d{3})$/;
@@ -14,18 +9,25 @@ function isValidZipCode(zipCode) {
     );
   }
   export const validateField = (type, val) => {
-      switch (type) {
+    switch (type) {
         case "email":
-          return /^\S+@\S+\.\S+$/.test(val);
-        case "zip_code":
-          return isValidZipCode(val);
-        case "first_name":
-        case "last_name":
+            return validator.isEmail(val);
+        case "zip":
+            return isValidZipCode(val);
+        case "name":
         case "company_name":
             return val.trim().length >= 2;
         case "phone":
-          return isValidPhone(val);
+            return isValidPhone(val);
+        case "percentage":
+            return val >= 0 && val <= 100;
+        case "address":
+            return isValidAddress(val);
+        case "url":
+            return validator.isURL(val);
+        case "tax_id":
+            return /^\d{7,9}$/.test(val);
         default:
-          return true;
-      }
-    };
+            return true;
+    }
+};

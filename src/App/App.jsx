@@ -38,25 +38,7 @@ function App() {
     <div className="AppWrapper">
       <Navbar />
       <Questionnaire />
-      {!questionnaireStarted && (
-        <>
-          <ContentLayout>
-            <Suspense fallback={<Loading />}>
-              <PartnerWith />
-            </Suspense>
-            <Suspense fallback={<Loading />}>
-              <BestMatch />
-            </Suspense>
-            <Suspense fallback={<Loading />}>
-              <FAQ />
-            </Suspense>
-          </ContentLayout>
-          <Suspense fallback={<Loading />}>
-            <Footer />
-          </Suspense>
-          <ScrollToTopButton/>
-        </>
-      )}
+      
     </div>
   );
 }

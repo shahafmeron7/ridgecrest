@@ -2,41 +2,70 @@
     display: flex;
     gap: 16px;
     justify-content: center;
+    /* padding: 8px 16px; */
+    width: 100%;
+}
+.formProgressWrapper{
+    display: flex;
+}
+.formProgressItemContainer{
+    padding: 8px 16px;
 }
 .formProgressItem{
-    
-    height: 40px;
-    width: 105px;
-    border-radius: 8px;
+    position: relative;
+    padding: 0px 12px;
+ 
     color: #99a5c540;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 500;
     line-height: 22px;
     text-align: center;
-
+    color: var(--black-color-1) ;
 }
-.formProgressItem::after{
+
+.progressText::after{
     content: "";
-    height: 10px;
+    height: 4px;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 4px;
     display: block;
-    border-radius: 6px;
-    background-color: #99a5c540;
+    border-radius: 1px;
+    background-color: #D9E0ED;
+    position: relative;
+  overflow: hidden;
 }
-.activeItem{
-    color: var(--blue-color-1);
+.currentStep::after {
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="4" viewBox="0 0 200 4" fill="none"><rect width="200" height="4" rx="1" fill="%23D9E0ED"/><mask id="mask0_883_17691" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="4"><rect width="200" height="4" rx="1" fill="%23D9E0ED"/></mask><g mask="url(%23mask0_883_17691)"><path d="M-4 -9H-8L-24 13H-20L-4 -9Z" fill="%2300B977"/><path d="M4 -9H0L-16 13H-12L4 -9Z" fill="%2300B977"/><path d="M8 -9H12L-4 13H-8L8 -9Z" fill="%2300B977"/><path d="M20 -9H16L0 13H4L20 -9Z" fill="%2300B977"/><path d="M24 -9H28L12 13H8L24 -9Z" fill="%2300B977"/><path d="M36 -9H32L16 13H20L36 -9Z" fill="%2300B977"/><path d="M40 -9H44L28 13H24L40 -9Z" fill="%2300B977"/><path d="M52 -9H48L32 13H36L52 -9Z" fill="%2300B977"/><path d="M56 -9H60L44 13H40L56 -9Z" fill="%2300B977"/><path d="M68 -9H64L48 13H52L68 -9Z" fill="%2300B977"/><path d="M72 -9H76L60 13H56L72 -9Z" fill="%2300B977"/><path d="M92 -9H88L72 13H76L92 -9Z" fill="%2300B977"/><path d="M80 -9H84L68 13H64L80 -9Z" fill="%2300B977"/><path d="M100 -9H96L80 13H84L100 -9Z" fill="%2300B977"/><path d="M108 -9H104L88 13H92L108 -9Z" fill="%2300B977"/><path d="M116 -9H112L96 13H100L116 -9Z" fill="%2300B977"/><path d="M120 -9H124L108 13H104L120 -9Z" fill="%2300B977"/><path d="M132 -9H128L112 13H116L132 -9Z" fill="%2300B977"/><path d="M136 -9H140L124 13H120L136 -9Z" fill="%2300B977"/><path d="M148 -9H144L128 13H132L148 -9Z" fill="%2300B977"/><path d="M152 -9H156L140 13H136L152 -9Z" fill="%2300B977"/><path d="M164 -9H160L144 13H148L164 -9Z" fill="%2300B977"/><path d="M168 -9H172L156 13H152L168 -9Z" fill="%2300B977"/><path d="M180 -9H176L160 13H164L180 -9Z" fill="%2300B977"/><path d="M184 -9H188L172 13H168L184 -9Z" fill="%2300B977"/><path d="M204 -9H200L184 13H188L204 -9Z" fill="%2300B977"/><path d="M192 -9H196L180 13H176L192 -9Z" fill="%2300B977"/><path d="M212 -9H208L192 13H196L212 -9Z" fill="%2300B977"/></g></svg>') repeat-x;
+    background-size: cover;
+    animation: move-svg 16s linear infinite;
+  }
+.completedStep::after{
+    background-color:#00B977;
 }
-.activeItem::after{
-    /* content: "";
-    height: 10px;
-    width: 100%;
-    margin-top: 10px;
-    border-radius: 6px; */
-
-    background-color:var(--blue-color-1);
-    
-}
+.formProgressItem:not(:first-child) .customBorder {
+    position: absolute;
+    left: 0;    
+    bottom: 0; 
+    width: 1px;
+    height: 21px;
+    background: #D9E0ED;
+  }
+  
+  .customBorder {
+    display: none; 
+  }
+  
+  .formProgressItem:not(:first-child) .customBorder {
+    display: block; 
+  }
+  @keyframes move-svg {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: -200px 0;
+    }
+  }
 @media only screen and (max-width: 767px) {
     .formProgressContainer{
       width: 100%;

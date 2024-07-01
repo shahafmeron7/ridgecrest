@@ -1,5 +1,5 @@
 // src/context/questionnaire/eventHandlers.js
-import * as actionTypes from "./../../reducers/actionTypes.js"
+import * as actionTypes from "./../../reducers/actionTypes.js";
 import { useCallback } from "react";
 import { validateField } from "@/utils/validationUtils";
 import { gsap } from "gsap";
@@ -16,10 +16,7 @@ import env from "@/utils/data/env";
 
 const TIME_DELAY_NEXT_QUESTION = 0.2;
 
-export const QuestionnaireHandlers = (
-  state,
-  dispatch
-) => {
+export const QuestionnaireHandlers = (state, dispatch) => {
   const findStepNumber = (questionCode) => {
     return questionnaireData.questions.find((q) => q.code === questionCode)
       .step;
@@ -93,12 +90,28 @@ export const QuestionnaireHandlers = (
       currentQuestion.type === "form-type"
     ) {
       currentQuestion.subquestions.forEach((sub) => {
-        if (!validateField(sub.code, responses[sub.code]?.answer)) {
-          proceedToNext = false;
-          newErrResponses[sub.code] = true; // Set error for this sub-question
+        const response = responses[sub.code]?.answer;
+
+        if (sub.element === "input" || sub.element==="free_text") {
+          console.log('validation input code',sub.validationCode)
+          if (!validateField(sub.validationCode, response)) {
+            proceedToNext = false;
+            newErrResponses[sub.code] = true; // Set error for this sub-question
+          }
+        } else if (sub.element === "dropdown" || sub.element === "selection") {
+          if (
+            response === null ||
+            response === undefined ||
+            response.trim() === ""
+          ) {
+            proceedToNext = false;
+            // newErrResponses[sub.code] = true; // Set error for this sub-question
+          }
+          console.log("dropdown/selection proceedToNext", proceedToNext);
         }
       });
       nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+      console.log("movetonextquestion", proceedToNext);
     } else if (currentQuestion.type === "one-selection") {
       const response = responses[currentQuestion.code];
       if (response && response.answerIndexes) {
@@ -132,11 +145,7 @@ export const QuestionnaireHandlers = (
         flowName,
         env.USER_ACTION_CLICK_NEXT
       );
-      sendImpressions(
-        eventData,
-        env.USER_EVENT_NAME,
-        env.STREAM_STEP_NAME
-      );
+      sendImpressions(eventData, env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
       dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: true });
 
       const nextStep = findStepNumber(nextQuestionCode);
@@ -158,7 +167,7 @@ export const QuestionnaireHandlers = (
         TIME_DELAY_NEXT_QUESTION
       );
     } else {
-      dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: false });
+      // dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: false });
       dispatch({
         type: actionTypes.SET_ERR_RESPONSES,
         payload: newErrResponses,
@@ -212,6 +221,32 @@ export const QuestionnaireHandlers = (
       const allSubquestionsAnswered = currentQuestion.subquestions.every(
         (sub) => {
           const response = responses[sub.code];
+
+          // Check for different input types
+          if (sub.element === "input" || sub.element==="free_text") {
+            console.log("input/freetext");
+
+            return response && response.answer && response.answer.trim() !== "";
+          } else if (
+            sub.element === "dropdown" ||
+            sub.element === "selection"
+          ) {
+           
+            console.log("dropdown/selection");
+            return (
+              response && response.answer !== null && response.answer !== ""
+            );
+          }
+          else if (sub.element === "birthdate") {
+            console.log("birth_date");
+            return response &&
+                   response.answer &&
+                   response.answer.day !== "" &&
+                   response.answer.month !== "" &&
+                   response.answer.year !== "";
+          }
+
+          // Fallback to default check for other types
           return response && response.answer && response.answer.trim() !== "";
         }
       );
@@ -301,6 +336,87 @@ export const QuestionnaireHandlers = (
       );
     }
   };
+  const handleDateChange = (questionCode, type, inputValue,inputIndex) => {
+    const { currentQuestion, responses } = state;
+    const currentResponse = responses[questionCode] || {
+      step: currentQuestion.step,
+      question:
+        currentQuestion.type === "details-question" ||
+        currentQuestion.type === "form-type"
+          ? currentQuestion.subquestions.find(
+              (sub) => sub.code === questionCode
+            ).text
+          : currentQuestion.text,
+          answerIndexes: [-1, -1, -1], // Initial indexes for day, month, year
+
+      answer: {
+        day: "",
+        month: "",
+        year: "",
+      },
+    };
+     // Update the specific type (day, month, or year) in the answer
+  const updatedAnswer = {
+    ...currentResponse.answer,
+    [type]: inputValue
+  };
+  // Update the answerIndexes based on the type
+  const updatedAnswerIndexes = [...currentResponse.answerIndexes];
+  if (type === "day") {
+    updatedAnswerIndexes[0] = inputIndex;
+  } else if (type === "month") {
+    updatedAnswerIndexes[1] = inputIndex;
+  } else if (type === "year") {
+    updatedAnswerIndexes[2] = inputIndex;
+  }
+  // Update the response with the new answer
+  const updatedResponse = {
+    ...currentResponse,
+    answer: updatedAnswer,
+    answerIndexes: updatedAnswerIndexes,
+  };
+    console.log(updatedResponse);
+
+    dispatch({
+      type: actionTypes.UPDATE_RESPONSES,
+      questionCode: questionCode,
+      response: updatedResponse,
+    });
+  };
+
+  const handleSelectionInputChange = (questionCode, answerIndex, type) => {
+    const { currentQuestion, responses } = state;
+    const selectedAnswer = currentQuestion.subquestions.find(
+      (sub) => sub.code === questionCode
+    ).answers[answerIndex];
+
+    const currentResponse = responses[questionCode] || {
+      step: currentQuestion.step,
+      question:
+        currentQuestion.type === "details-question" ||
+        currentQuestion.type === "form-type"
+          ? currentQuestion.subquestions.find(
+              (sub) => sub.code === questionCode
+            ).text
+          : currentQuestion.text,
+      answerIndexes: [],
+    };
+
+    const updatedResponse = {
+      ...currentResponse,
+      answerIndexes: [answerIndex],
+      answer: selectedAnswer,
+    };
+
+    console.log(updatedResponse);
+
+    dispatch({
+      type: actionTypes.UPDATE_RESPONSES,
+      questionCode: questionCode,
+      response: updatedResponse,
+    });
+  };
+
   const handleInputChange = (questionCode, inputValue, isOther = false) => {
     const { currentQuestion, responses, errResponses } = state;
     const currentResponse = responses[questionCode] || {
@@ -339,10 +455,11 @@ export const QuestionnaireHandlers = (
       questionCode: questionCode,
       response: updatedResponse,
     });
-    dispatch({
-      type: actionTypes.CHANGE_NEXT_BTN_STATE,
-      isEnabled: inputValue.trim().length > 0,
-    });
+    console.log("isEnabled", inputValue.trim().length > 0);
+    // dispatch({
+    //   type: actionTypes.CHANGE_NEXT_BTN_STATE,
+    //   isEnabled: inputValue.trim().length > 0,
+    // });
     // Check if there's an existing error and clear it
     if (errResponses[questionCode]) {
       const newErrResponses = { ...errResponses };
@@ -355,7 +472,7 @@ export const QuestionnaireHandlers = (
       });
     }
   };
- 
+
   const completeQuestionnaire = useCallback(() => {
     const { responses } = state;
     let finalResponses = {};
@@ -366,6 +483,11 @@ export const QuestionnaireHandlers = (
         let answerIndex = value.answerIndexes[0];
         value.answer = answerIndex !== 0 ? value.answer.split(/[-+]/)[0] : "1";
       }
+      // if(key==="birth_date"){
+      //   const formattedAnswer = `${currentResponse.answer.day || ""}/${
+      //     currentResponse.answer.month || ""
+      //   }/${currentResponse.answer.year || ""}`;
+      // }
     });
     const selectedBrand = chooseBrand(responses);
     // console.log("selectedBrand",selectedBrand)
@@ -386,12 +508,12 @@ export const QuestionnaireHandlers = (
     //  console.log("allScores",allScores);
     //  console.log("Scores:", allScores);
     // let testID='9';
-     if(selectedBrand===env.PAYCOR_FORM_ID){
+    if (selectedBrand === env.PAYCOR_FORM_ID) {
       //  console.log("change paycor")
-     updatePaycorResponseFormat(finalResponses)
-     }
+      updatePaycorResponseFormat(finalResponses);
+    }
     //  finalResponses["email"]["answer"] = testEmail[selectedBrand];
-      // finalResponses["email"]["answer"] = "sonary3@adptest.com";
+    // finalResponses["email"]["answer"] = "sonary3@adptest.com";
 
     // console.log(finalResponses);
 
@@ -411,10 +533,6 @@ export const QuestionnaireHandlers = (
     dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: isEnabled });
   };
 
-
-
-
-
   return {
     animateAndNavigate,
     moveToPrevQuestion,
@@ -424,6 +542,8 @@ export const QuestionnaireHandlers = (
     handleMultipleAnswerSelection,
     handleAnswerSelection,
     handleInputChange,
+    handleDateChange,
+    handleSelectionInputChange,
     completeQuestionnaire,
     changeNextBtnState,
   };

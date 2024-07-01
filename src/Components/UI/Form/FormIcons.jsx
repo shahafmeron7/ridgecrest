@@ -2,6 +2,7 @@ import React from 'react';
 import  ClockIcon  from "@/images/form icons/clock.svg";
 import  LockIcon  from "@/images/form icons/lock.svg";
 import  TrustedIcon  from "@/images/form icons/trustedcheckmark.svg";
+import creditscoreIcon from "@/images/form icons/creditscore.svg"
 import styles from './FormIcons.module.css';
 // import { useQuestionnaire } from '../../context/QuestionnaireContext';
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
@@ -19,8 +20,8 @@ const FormIcons = () => {
             alt: "trust checkmark icon"
         },
         {
-            text: "Takes 1 minute",
-            Icon: ClockIcon,
+            text: "Your credit score won’t be affected",
+            Icon: creditscoreIcon,
             alt: "clock icon"
         }
     ];

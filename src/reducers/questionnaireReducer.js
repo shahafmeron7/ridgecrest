@@ -5,11 +5,15 @@ export const initialState = () => {
   const currentQuestion = questionnaireData.questions.find(
     (q) => q.code === initialQuestionCode
   );
+  const formQuestions =questionnaireData.questions.filter(
+    (q) => q.type === 'form-type'
+  );
   const flowID = questionnaireData.flow_id;
   const flowName = questionnaireData.flow_name;
 
   return {
-    currentQuestion: currentQuestion || {}, 
+    currentQuestion: currentQuestion || {},
+    formQuestions: formQuestions || {},
     currentQuestionCode: initialQuestionCode,
     questionHistory: [initialQuestionCode],
     isAnimatingOut: false,
