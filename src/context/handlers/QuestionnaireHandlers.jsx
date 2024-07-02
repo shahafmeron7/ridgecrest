@@ -116,7 +116,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       const response = responses[currentQuestion.code];
       if (response && response.answerIndexes) {
         const selectedIndex = response.answerIndexes[0];
-        // checkAndUpdateFormID(currentQuestionCode, selectedIndex);
 
         nextQuestionCode =
           currentQuestion.answers[selectedIndex]?.next_question_code;

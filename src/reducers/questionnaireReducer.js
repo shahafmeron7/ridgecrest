@@ -21,7 +21,7 @@ export const initialState = () => {
     errResponses: {},
     questionnaireStarted: false,
     questionnaireCompleted: false,
-    targetFormID: undefined,
+    formProgressStep: currentQuestion.formSteps[0].step,
     inputModified: false,
     nextBtnEnabled: false,
     progressBarWidth: 0,
@@ -46,7 +46,11 @@ export function reducer(state, action) {
         ...state,
         questionHistory: [...state.questionHistory, action.payload],
       };
-
+      case actionTypes.UPDATE_FORM_PROGRESS_STEP:
+        return {
+          ...state,
+          formProgressStep: action.payload,
+        };
     case actionTypes.SET_QUESTION_HISTORY:
       return {
         ...state,

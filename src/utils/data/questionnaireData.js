@@ -4,7 +4,7 @@ const validationCodes = {
   full_name: "name",
   email: "email",
   phone: "phone",
-  company_name:"name",
+  company_name: "name",
   home_address: "address",
   zip_code: "zip",
   home_phone: "phone",
@@ -13,7 +13,7 @@ const validationCodes = {
   business_zip: "zip",
   business_website: "url",
   business_tax_id: "tax_id",
-  // Add more mappings as needed
+  security_number: "ssn",
 };
 
 const questionnaireData = {
@@ -36,9 +36,53 @@ const questionnaireData = {
       step: 1,
       display_list_direction: "col",
       type: "form-type",
+      formSteps: [
+        {
+          step: 1,
+          subquestions: [
+            {
+              text: "How much funding do you need?",
+              code: "funding_amount",
+              example: "Choose an option",
+              answers: [
+                "$5K-$25K",
+                "$25K-$75K",
+                "$75K-$150K",
+                "$150K-$500K",
+                "Over $500K",
+              ],
+              element: "dropdown",
+            },
+          ],
+        },
+        {
+          step: 2,
+          subquestions: [
+            {
+              text: "How long have you been in business?",
+              code: "business_time",
+              example: "Choose an option",
+              answers: ["Under 6 Months", "6 Months to 1 Year", "Over 1 Year"],
+              element: "selection",
+            },
+          ],
+        },
+      ],
       subquestions: [
         {
+          text: "What percentage of the business do you own?",
+          type: "number",
+          code: "business_percentage",
+          error: "Please enter a valid percentage amount",
+          example: "Choose an amount",
+          element: "percentage",
+          min: 1,
+          max: 100,
+          validationCode: validationCodes["business_percentage"],
+        },
+        {
           text: "Full name",
+          type: "text",
           code: "full_name",
           error: "Your full name must contain at least 2 characters",
           example: "Full name",
@@ -47,6 +91,7 @@ const questionnaireData = {
         },
         {
           text: "Email",
+          type: "text",
           code: "email",
           error: "Please enter a valid email address",
           example: "Email address",
@@ -55,6 +100,7 @@ const questionnaireData = {
         },
         {
           text: "Phone number",
+          type: "text",
           code: "phone",
           error: "Please enter a valid phone number",
           example: "(234) 567-999 ",
@@ -71,7 +117,7 @@ const questionnaireData = {
       ],
       answers: [
         {
-          next_question_code: "personal_information",
+          next_question_code: "business_information",
         },
       ],
     },
@@ -81,6 +127,7 @@ const questionnaireData = {
       step: 2,
       type: "form-type",
       display_list_direction: "col",
+      
       subquestions: [
         {
           text: "How much funding do you need?",
@@ -218,7 +265,7 @@ const questionnaireData = {
           text: "How do you plan to use the loan?",
           code: "loan_info",
           example: "Write here",
-          maxLength: 20,
+          maxLength: 250,
           error: "Please enter more than 2 characters",
           element: "free_text",
           validationCode: "loan_info",
@@ -237,6 +284,7 @@ const questionnaireData = {
         },
         {
           text: "What is your company name?",
+          type: "text",
           code: "company_name",
           example: "E.g: Company Name",
           error: "Please enter more than 2 characters",
@@ -245,6 +293,7 @@ const questionnaireData = {
         },
         {
           text: "Business address",
+          type: "text",
           code: "business_address",
           example: "E.g: 23 Street NY",
           error: "Please enter a valid address",
@@ -253,6 +302,7 @@ const questionnaireData = {
         },
         {
           text: "Business zip code",
+          type: "text",
           code: "business_zip",
           example: "E.g: 75001",
           error: "Please enter a valid 5-digit ZIP code.",
@@ -276,6 +326,8 @@ const questionnaireData = {
         },
         {
           text: "Business Website",
+          type: "text",
+
           code: "business_website",
           example: "E.g: www.google.com",
           error: "Please enter a valid website url",
@@ -284,8 +336,10 @@ const questionnaireData = {
         },
         {
           text: "What is your business tax ID?",
+          type: "text",
+          mode: "numeric",
           code: "business_tax_id",
-          example: "E.g: 1973684",
+          example: "E.g: 12-3456789",
           error: "Please enter a valid ID",
           element: "input",
           validationCode: validationCodes["business_tax_id"],
@@ -303,10 +357,12 @@ const questionnaireData = {
       step: 3,
       display_list_direction: "col",
       type: "form-type",
+
       subquestions: [
         {
           text: "Home address",
           code: "home_address",
+          type: "text",
           error: "Please enter a valid address",
           example: "e.g: 95 Street of white roses",
           element: "input",
@@ -314,6 +370,7 @@ const questionnaireData = {
         },
         {
           text: "Home zip code",
+          type: "text",
           code: "zip_code",
           error: "Please enter a valid 5-digit ZIP code.",
           example: "e.g: 90210",
@@ -332,10 +389,13 @@ const questionnaireData = {
         },
         {
           text: "What percentage of the business do you own?",
+          type: "number",
           code: "business_percentage",
           error: "Please enter a valid percentage amount",
           example: "Choose an amount",
-          element: "input",
+          element: "percentage",
+          min: 1,
+          max: 100,
           validationCode: validationCodes["business_percentage"],
         },
         {
@@ -345,16 +405,18 @@ const questionnaireData = {
         },
         {
           text: "Social security number",
+          type: "text",
           code: "security_number",
           error: "Please enter a valid security number",
           example: "E.g: 987654321",
+          maxLength: 9,
           element: "input",
           validationCode: validationCodes["security_number"],
         },
         {
           text: "Does your business have an individual with significant responsibility for managing the legal entity other then you?",
           code: "legal_entity",
-          answers: ["Yes","No"],
+          answers: ["Yes", "No"],
           element: "selection",
         },
       ],

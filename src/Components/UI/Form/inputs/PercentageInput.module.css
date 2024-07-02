@@ -1,0 +1,8 @@
+
+ 
+ 
+ .percentageSymbol {
+   margin-left: 2px;
+   pointer-events: none; /* Ensure the '%' symbol does not interfere with input */
+ }
+ 

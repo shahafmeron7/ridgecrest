@@ -47,9 +47,7 @@ export const validateField = (type, val) => {
         return /^\S+@\S+\.\S+$/.test(val);
       case "zip_code":
         return isValidZipCode(val);
-      case "first_name":
-      case "last_name":
-      case "company_name":
+      case "name":
           return val.trim().length >= 2;
       case "phone":
         return isValidPhone(val);

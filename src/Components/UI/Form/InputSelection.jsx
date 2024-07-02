@@ -17,7 +17,7 @@ const InputSelection = ({ subQuestion,selectedAnswerIndex }) => {
     <ul className={styles.selectionListContainer}>
       {subQuestion.answers.map((answer, index) => (
         <li
-          key={answer.code}
+          key={answer+index}
           className={`${styles.selectionListItem} ${
             selectedIndex === index ? styles.selected : ""
           }`}

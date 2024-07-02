@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./InputWithValidation.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import gsap from "gsap";
+import InputError from "./inputs/InputError";
+import formatInputValue  from "@/utils/formatUtils";
 
 const InputWithValidation = React.forwardRef(
   (
@@ -10,7 +12,9 @@ const InputWithValidation = React.forwardRef(
       inputType,
       name,
       value,
+      validationCode,
       placeholder,
+      minLength = null,
       maxLength = null,
       isOther = false,
       errorMessage,
@@ -22,8 +26,6 @@ const InputWithValidation = React.forwardRef(
       nullTargetWarn: false,
     });
 
-    const inputRef = useRef(null);
-
     const { handleInputChange } = useQuestionnaire();
     const [inputValue, setInputValue] = useState(value);
     const [error, setError] = useState(isError);
@@ -33,96 +35,81 @@ const InputWithValidation = React.forwardRef(
 
     useEffect(() => {
       if (isOther) {
-        gsap.fromTo(
-          ".animateOtherInput",
-          { y: -136, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            delay: 0.8,
-            duration: 0.5,
-            ease: "none",
-            onComplete: () => {
-              const element = ref.current;
-              if (element) {
-                setTimeout(() => {
-                  element.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                  });
-                }, 500);
-                element.focus();
-              }
-            }
-          }
-        );
+        animateOtherInput(ref);
       }
-    }, [isOther]);
+    }, [isOther, ref]);
 
-    const formatPhoneNumber = (value) => {
-      const phoneNumber = value.replace(/[^\d]/g, "");
-      const phoneNumberLength = phoneNumber.length;
-
-      if (phoneNumberLength < 4) return phoneNumber;
-      if (phoneNumberLength < 7) return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+    const animateOtherInput = (ref) => {
+      gsap.fromTo(
+        ".animateOtherInput",
+        { y: -136, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          delay: 0.8,
+          duration: 0.5,
+          ease: "none",
+          onComplete: () => {
+            const element = ref.current;
+            if (element) {
+              setTimeout(() => {
+                element.scrollIntoView({
+                  behavior: "smooth",
+                  block: "center",
+                });
+              }, 500);
+              element.focus();
+            }
+          },
+        }
+      );
     };
+
+    
 
     const handleChange = (e) => {
       const newValue = e.target.value;
-      console.log(name)
-      const formattedValue = name === "phone" ? formatPhoneNumber(newValue) : newValue;
+      const formattedValue = formatInputValue(newValue, validationCode);
 
-      setInputValue(formattedValue);
-      handleInputChange(name, formattedValue, isOther);
+      if (formattedValue !== inputValue) {
+        setInputValue(formattedValue);
+        handleInputChange(name, formattedValue, isOther);
+      }
     };
+    const inputMode = ["phone", "zip", "id", "ssn", "tax_id"].includes(
+      validationCode
+    )
+      ? "numeric"
+      : "text";
 
     return (
-      <div
-        className={`${styles.inputContainer} ${
-          isOther ? `animateOtherInput ${styles.otherInput}` : ""
-        }`}
-        style={name === "company_name" ? { width: "100%" } : {}}
-      >
-      {inputType==='input' ? (
-        <input
-          data-lpignore="true"
-          ref={ref}
-          type={type}
-          name={name}
-          maxLength={maxLength}
-          value={inputValue}
-          inputMode={name === "phone" ? "numeric" : type}
-          onChange={handleChange}
-          placeholder={placeholder}
-          className={`${styles.input} ${error ? `${styles.inputError}` : ""}`}
-        />
-
-      ):
-      (
-        <textarea
-          className={`${styles.textarea} ${error ? `${styles.inputError}` : ""}`}
-          value={inputValue}
-        onChange={handleChange}
-        maxLength={maxLength}
-        placeholder={placeholder}
-      />
-      )
-      }
-                {/* <label className={styles.inputLabel}>{placeholder}</label> */}
-
-
-        <div
-          className={`${styles.errContainer} ${
-            error ? `${styles.visible}` : `${styles.notVisible}`
-          }`}
-        >
-          <img
-            src="https://assets.sonary.com/wp-content/uploads/2024/01/24143354/Icon-Name-2.svg"
-            alt="error icon"
+      <div className={styles.inputContainer}>
+        {inputType === "input" ? (
+          <input
+            data-lpignore="true"
+            ref={ref}
+            type={type}
+            name={name}
+            minLength={minLength}
+            maxLength={maxLength}
+            value={inputValue}
+            inputMode={inputMode}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className={`${styles.input} ${error ? `${styles.inputError}` : ""}`}
           />
-          <span className={styles.errText}>{errorMessage}</span>
-        </div>
+        ) : (
+          <textarea
+            className={`${styles.textarea} ${
+              error ? `${styles.inputError}` : ""
+            }`}
+            value={inputValue}
+            onChange={handleChange}
+            maxLength={maxLength}
+            placeholder={placeholder}
+          />
+        )}
+        <InputError error={error} message={errorMessage} />
       </div>
     );
   }
