@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuestionnaire } from "../../../context/QuestionnaireContext.jsx";
+import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import styles from "./FormProgress.module.css";
 
 const FormProgress = () => {

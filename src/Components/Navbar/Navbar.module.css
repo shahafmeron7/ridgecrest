@@ -5,7 +5,7 @@
 }
 
 .navbar{
-    padding: 15px 0px;
+    padding: 16px 0px;
     display: flex;
     align-items: center;
     /* justify-content: space-between; */
@@ -17,11 +17,5 @@
     align-items:center;
 }
 @media only screen and (max-width: 767px) {
-    .logosWrapper{
-      /* flex-direction: column; */
-      gap: 4px;
-    }
-    .logosWrapper img{
-        height: 18px;
-    }
+   
   }

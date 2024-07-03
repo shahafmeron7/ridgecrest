@@ -40,41 +40,41 @@ const questionnaireData = {
         {
           step: 1,
           subquestions: [
-          
-            // {
-            //   text: "Full name",
-            //   type: "text",
-            //   code: "full_name",
-            //   error: "Your full name must contain at least 2 characters",
-            //   example: "Full name",
-            //   element: "input",
-            //   validationCode: validationCodes["full_name"],
-            // },
-            // {
-            //   text: "Email",
-            //   type: "text",
-            //   code: "email",
-            //   error: "Please enter a valid email address",
-            //   example: "Email address",
-            //   element: "input",
-            //   validationCode: validationCodes["email"],
-            // },
-            // {
-            //   text: "Phone number",
-            //   type: "text",
-            //   code: "phone",
-            //   error: "Please enter a valid phone number",
-            //   example: "(234) 567-999 ",
-            //   maxLength: "14",
-            //   element: "input",
-            //   validationCode: validationCodes["phone"],
-            // },
-            // {
-            //   text: "How much is your annual revenue?",
-            //   code: "annual_revenue",
-            //   answers: ["Under 200K", "200-500K", "Over 500K"],
-            //   element: "selection",
-            // },
+      
+             {
+               text: "Full name",
+               type: "text",
+               code: "full_name",
+               error: "Your full name must contain at least 2 characters",
+               example: "Full name",
+               element: "input",
+               validationCode: validationCodes["full_name"],
+             },
+             {
+               text: "Email",
+               type: "text",
+               code: "email",
+               error: "Please enter a valid email address",
+               example: "Email address",
+               element: "input",
+               validationCode: validationCodes["email"],
+             },
+             {
+               text: "Phone number",
+               type: "text",
+               code: "phone",
+               error: "Please enter a valid phone number",
+               example: "(234) 567-999 ",
+               maxLength: "14",
+               element: "input",
+               validationCode: validationCodes["phone"],
+             },
+             {
+               text: "How much is your annual revenue?",
+               code: "annual_revenue",
+               answers: ["Under 200K", "200-500K", "Over 500K"],
+               element: "selection",
+             },
 
             {
               text: "By checking this box, you electronically consent to the Ridge Crest Financial Group, LLC Terms and Conditions and Privacy policy",
@@ -99,7 +99,7 @@ const questionnaireData = {
       ],
       answers: [
         {
-          next_question_code: "thank_you",
+          next_question_code: "business_information",
         },
       ],
     },
