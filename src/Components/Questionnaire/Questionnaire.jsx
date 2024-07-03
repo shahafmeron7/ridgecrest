@@ -75,7 +75,7 @@ const Questionnaire = () => {
           )}
 
           <QuestionnaireButtons />
-        <FormIcons />
+        {!questionnaireStarted && <FormIcons />}
         </div>
 
       </QuestionnaireWrapper>

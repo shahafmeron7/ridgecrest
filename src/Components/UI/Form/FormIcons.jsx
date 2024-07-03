@@ -20,7 +20,7 @@ const FormIcons = () => {
             alt: "trust checkmark icon"
         },
         {
-            text: "Your credit score won’t be affected",
+            text: "Your credit ",
             Icon: creditscoreIcon,
             alt: "clock icon"
         }

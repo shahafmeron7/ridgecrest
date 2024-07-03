@@ -60,7 +60,7 @@
   bottom: 0;
   /* transform: translateY(-50%); */
   width: 1px;
-  height: 21px;
+  height: 23px;
   background: #d9e0ed;
 }
 
@@ -83,7 +83,18 @@
   .formProgressContainer {
     width: 100%;
   }
-  /* .formProgressItem {
-    width: 80px;
-  } */
+  .formProgressItem {
+    /* text-align: left; */
+    line-height: 15px;
+    gap: 4px;
+  }
+  .formProgressItem:first-child{
+    padding-left: 0px;
+  }
+  .formProgressItem:last-child{
+    padding-right: 0px;
+  }
+  .formProgressItem:not(:first-child) .customBorder {
+height: 100%;
+  }
 }
