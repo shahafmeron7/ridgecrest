@@ -5,7 +5,7 @@ import styles from "./AnswersContent.module.css";
 import  UnselectedCheckboxSVG  from "@/images/unselectedCircleCheckbox.svg";
 import  SelectedCheckboxSVG  from "@/images/selectedCircleCheckbox.svg";
 
-import InputWithValidation from "@/components/UI/Form/InputWithValidation.jsx";
+import InputWithValidation from "@/components/UI/Form/inputs/InputWithValidation.jsx";
 
 const OneSelectionQuestion = () => {
   const {

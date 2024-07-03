@@ -42,6 +42,7 @@
   gap: 24px;
   width: 100%;
   border-radius: 24px;
+  
   /* border: 2px solid var(--purple-color-1);
   background: var(--Text-White---Element-White, #FFF);
   box-shadow: 0px 0px 32px 0px rgba(55, 0, 143, 0.20); */
@@ -54,18 +55,30 @@
   align-items: center;
   gap: 8px;
   width: 100%;
+  
 }
+
 .prevBtn {
   width: 56px;
   height: 56px;
-  /* padding: 8px 24px; */
   border-radius: 8px;
-  /* color: var(--black-color-1); */
   color: #323738;
   border: 1px solid var(--border-border-50);
   background-color: transparent;
   cursor: pointer;
 }
+
+/* .prevBtnIn {
+  width: 56px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.prevBtnOut {
+  width: 0;
+  opacity: 0;
+  visibility: hidden;
+} */
 .prevBtn svg{
   width: 20px;
   height: 20px;
@@ -90,6 +103,7 @@
   background-color: var(--btn-disabled-color);
   /* transition: background-color 0.3ms ease-in; */
 }
+
 .enabled{
   color: #fff;
   cursor: pointer;

@@ -4,7 +4,7 @@ import { buildEventData,sendImpressions } from '../utils/impression/impressionUt
 import env from "@/utils/data/env";
 
 export const useNavigationEffects = (state,moveToPrevQuestion) => {
-    const { questionHistory, currentQuestion,flowID,flowName, currentQuestionCode, questionnaireCompleted } = state;
+    const { questionHistory,formProgressStep ,currentQuestion,flowID,flowName, currentQuestionCode, questionnaireCompleted } = state;
     
       
      useEffect(() => {
@@ -14,7 +14,7 @@ export const useNavigationEffects = (state,moveToPrevQuestion) => {
                      window.location.href = "https://sonary.com/";
                  } else if (currentQuestionCode !== "loader") {
                      sendImpressions(
-                         buildEventData(currentQuestion,flowID,flowName,env.USER_ACTION_CLICK_PREV_BROWSER),
+                         buildEventData(formProgressStep,currentQuestion,flowID,flowName,env.USER_ACTION_CLICK_PREV_BROWSER),
                          env.USER_EVENT_NAME,
                          env.STREAM_STEP_NAME
                      );

@@ -27,9 +27,9 @@ function App() {
       <div className="AppWrapper">
         <Navbar />
         <ThankYouLayout />
-        <Suspense fallback={<Loading />}>
+        {/* <Suspense fallback={<Loading />}>
             <Footer />
-          </Suspense>
+          </Suspense> */}
       </div>
     );
   }

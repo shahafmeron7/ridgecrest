@@ -11,17 +11,15 @@ import {
 
 import { chooseBrand } from "@/utils/scoring/newScoring.js";
 
-import { updatePaycorResponseFormat } from "@/utils/helperFunctions";
 import env from "@/utils/data/env";
 
 const TIME_DELAY_NEXT_QUESTION = 0.2;
 
 export const QuestionnaireHandlers = (state, dispatch) => {
-  const findStepNumber = (questionCode) => {
-    return questionnaireData.questions.find((q) => q.code === questionCode)
-      .step;
+  const findQuestion = (questionCode) => {
+    return questionnaireData.questions.find((q) => q.code === questionCode);
   };
-  const animateAndNavigate = (onComplete, nextProgressWidth, delay = 0) => {
+  const animateAndNavigate = (onComplete, nextProgressWidth=null, delay = 0) => {
     dispatch({ type: actionTypes.SET_IS_ANIMATING_OUT, payload: true });
     const tl = gsap.timeline({
       onComplete: () => {
@@ -30,11 +28,11 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       },
     });
 
-    tl.to(".progressLine", {
-      width: `${nextProgressWidth}%`,
-      duration: 0.3,
-      ease: "none",
-    });
+    // tl.to(".progressLine", {
+    //   width: `${nextProgressWidth}%`,
+    //   duration: 0.3,
+    //   ease: "none",
+    // });
 
     tl.to(
       ".animateFadeOut",
@@ -46,27 +44,65 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       `+=0.1`
     );
   };
+  // const moveToPrevQuestion = () => {
+  //   const { questionHistory,formProgressStep } = state;
+  //   if (questionHistory.length > 1) {
+  //     const newHistory = questionHistory.slice(0, -1);
+  //     const prevQuestionCode = newHistory[newHistory.length - 1];
+  //     const prevStep = findStepNumber(prevQuestionCode);
+  //     const newProgressBarWidth = Math.min(
+  //       100,
+  //       Math.round(((prevStep - 1) / (4 - 1)) * 100)
+  //     );
+
+  //     dispatch({
+  //       type: actionTypes.SET_PROGRESS_BAR_WIDTH,
+  //       payload: newProgressBarWidth,
+  //     });
+  //     animateAndNavigate(() => {
+  //       dispatch({
+  //         type: actionTypes.SET_CURRENT_QUESTION_CODE,
+  //         payload: prevQuestionCode,
+  //       });
+  //     }, newProgressBarWidth);
+
+  //     dispatch({ type: actionTypes.SET_QUESTION_HISTORY, payload: newHistory });
+  //   }
+  // };
   const moveToPrevQuestion = () => {
-    const { questionHistory } = state;
-    if (questionHistory.length > 1) {
+    const { questionHistory, formProgressStep, currentQuestion } = state;
+
+    if (formProgressStep > 1) {
+      // If there are previous form steps, move back to the previous form step
+      animateAndNavigate(() => {
+        dispatch({
+          type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+          payload: formProgressStep - 1,
+        });
+      }, 100);
+    } else if (questionHistory.length > 1) {
+      // If there are no previous form steps, move back to the previous general question
       const newHistory = questionHistory.slice(0, -1);
       const prevQuestionCode = newHistory[newHistory.length - 1];
-      const prevStep = findStepNumber(prevQuestionCode);
+      const prevQuestion = findQuestion(prevQuestionCode);
+      const prevStep = prevQuestion.step;
       const newProgressBarWidth = Math.min(
         100,
         Math.round(((prevStep - 1) / (4 - 1)) * 100)
       );
-
-      dispatch({
-        type: actionTypes.SET_PROGRESS_BAR_WIDTH,
-        payload: newProgressBarWidth,
-      });
+      // dispatch({
+      //   type: actionTypes.SET_PROGRESS_BAR_WIDTH,
+      //   payload: newProgressBarWidth,
+      // });
       animateAndNavigate(() => {
         dispatch({
           type: actionTypes.SET_CURRENT_QUESTION_CODE,
           payload: prevQuestionCode,
         });
-        // goToPrevious(prevQuestionCode,newHistory);  // Now purely handles the state and history update
+        dispatch({
+          type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+          payload: prevQuestion.formSteps ? prevQuestion.formSteps.length : 1,
+        });
       }, newProgressBarWidth);
 
       dispatch({ type: actionTypes.SET_QUESTION_HISTORY, payload: newHistory });
@@ -76,24 +112,28 @@ export const QuestionnaireHandlers = (state, dispatch) => {
   const moveToNextQuestion = () => {
     let proceedToNext = true;
     let nextQuestionCode;
-
     const {
       currentQuestion,
       currentQuestionCode,
       responses,
       flowID,
       flowName,
+      formProgressStep,
     } = state;
     const newErrResponses = {};
+    const subquestions =
+      currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
+    // console.log('im here subquestions move tonext questions',subquestions)
+
     if (
       currentQuestion.type === "details-question" ||
       currentQuestion.type === "form-type"
     ) {
-      currentQuestion.subquestions.forEach((sub) => {
+      subquestions.forEach((sub) => {
         const response = responses[sub.code]?.answer;
 
-        if (sub.element === "input" || sub.element==="free_text") {
-          console.log('validation input code',sub.validationCode)
+        if (sub.element === "input" || sub.element === "free_text") {
+          console.log("validation input code", sub.validationCode);
           if (!validateField(sub.validationCode, response)) {
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
@@ -110,7 +150,9 @@ export const QuestionnaireHandlers = (state, dispatch) => {
           console.log("dropdown/selection proceedToNext", proceedToNext);
         }
       });
+
       nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+
       console.log("movetonextquestion", proceedToNext);
     } else if (currentQuestion.type === "one-selection") {
       const response = responses[currentQuestion.code];
@@ -137,34 +179,54 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       }
     }
 
-    if (proceedToNext && nextQuestionCode) {
+    if (proceedToNext) {
+      const currentFormStep = formProgressStep;
+      const totalFormSteps = currentQuestion.formSteps.length;
+      if (currentFormStep < totalFormSteps) {
+        // Move to next form step within the current question
+        // console.log('moving form step')
+        animateAndNavigate(
+          () => {
+            dispatch({
+              type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+              payload: currentFormStep + 1,
+            });
+          },
+          100, // need to replace this with progress with (old leadgens). for now it does not matter.
+          TIME_DELAY_NEXT_QUESTION
+        );
+      } else {
+        // Move to the next question and reset formProgressStep
+        nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+
+        if (nextQuestionCode) {
+          // console.log('moving question code')
+
+          animateAndNavigate(
+            () => {
+              // goToNext(nextQuestionCode)
+              dispatch({
+                type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+                payload: 1,
+              });
+              handleNavigateNextQuestion(nextQuestionCode);
+            },
+            100, // need to replace this with progress with (old leadgens). for now it does not matter.
+            TIME_DELAY_NEXT_QUESTION
+          );
+
+         
+        }
+      }
       const eventData = buildEventData(
+        formProgressStep,
         currentQuestion,
         flowID,
         flowName,
         env.USER_ACTION_CLICK_NEXT
       );
       sendImpressions(eventData, env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
-      dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: true });
-
-      const nextStep = findStepNumber(nextQuestionCode);
-      const newProgressBarWidth = Math.min(
-        100,
-        Math.round(((nextStep - 1) / (4 - 1)) * 100)
-      );
-      dispatch({
-        type: actionTypes.SET_PROGRESS_BAR_WIDTH,
-        payload: newProgressBarWidth,
-      });
-
-      animateAndNavigate(
-        () => {
-          // goToNext(nextQuestionCode)
-          handleNavigateNextQuestion(nextQuestionCode);
-        },
-        newProgressBarWidth,
-        TIME_DELAY_NEXT_QUESTION
-      );
+      // dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: true });
     } else {
       // dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: false });
       dispatch({
@@ -211,44 +273,42 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     });
   };
   const checkAndEnableNextButton = useCallback(() => {
-    const { currentQuestion, responses } = state;
+    const { currentQuestion, responses, formProgressStep } = state;
+    const subquestions =
+      currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
+    // console.log("checkAndEnableNextButton subq",subquestions);
     if (
       currentQuestion.type === "details-question" ||
       currentQuestion.type === "form-type"
     ) {
       // Check if all subquestions have been answered
-      const allSubquestionsAnswered = currentQuestion.subquestions.every(
-        (sub) => {
-          const response = responses[sub.code];
+      const allSubquestionsAnswered = subquestions.every((sub) => {
+        const response = responses[sub.code];
 
-          // Check for different input types
-          if (sub.element === "input" || sub.element==="free_text") {
-            console.log("input/freetext");
-
-            return response && response.answer && response.answer.trim() !== "";
-          } else if (
-            sub.element === "dropdown" ||
-            sub.element === "selection"
-          ) {
-           
-            console.log("dropdown/selection");
-            return (
-              response && response.answer !== null && response.answer !== ""
-            );
-          }
-          else if (sub.element === "birthdate") {
-            console.log("birth_date");
-            return response &&
-                   response.answer &&
-                   response.answer.day !== "" &&
-                   response.answer.month !== "" &&
-                   response.answer.year !== "";
-          }
-
-          // Fallback to default check for other types
+        // Check for different input types
+        if (sub.element === "input" || sub.element === "free_text") {
           return response && response.answer && response.answer.trim() !== "";
+        } else if (sub.element === "dropdown" || sub.element === "selection") {
+          return response && response.answer !== null && response.answer !== "";
+        } else if (sub.element === "birthdate") {
+          return (
+            response &&
+            response.answer &&
+            response.answer.day !== "" &&
+            response.answer.month !== "" &&
+            response.answer.year !== ""
+          );
+        } else if (sub.element === "checkbox") {
+          return (
+            response &&
+            response.answer &&
+            response.answer.trim() !== "" &&
+            response.answer != "false"
+          );
         }
-      );
+        // Fallback to default check for other types
+        return response && response.answer && response.answer.trim() !== "";
+      });
       dispatch({
         type: actionTypes.CHANGE_NEXT_BTN_STATE,
         isEnabled: allSubquestionsAnswered,
@@ -283,14 +343,18 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         isEnabled: isAnswered,
       });
     }
-  }, [state.currentQuestion, state.responses, dispatch]);
+  }, [
+    state.currentQuestionCode,
+    state.formProgressStep,
+    state.responses,
+    dispatch,
+  ]);
 
   const handleAnswerSelection = (questionCode, answerIndex) => {
     const { currentQuestion, responses } = state;
     const answer = currentQuestion.answers[answerIndex];
     const answerText = answer?.text;
     const existingResponse = responses[questionCode] || {};
-    // checkAndUpdateFormID(questionCode, answerIndex);
 
     const newResponse = {
       ...existingResponse,
@@ -315,7 +379,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     });
     const nextQuestionCode = answer?.next_question_code;
     if (nextQuestionCode) {
-      const nextStep = findStepNumber(nextQuestionCode);
+      const nextStep = findQuestion(nextQuestionCode).step;
       const newProgressBarWidth = Math.min(
         100,
         Math.round(((nextStep - 1) / (4 - 1)) * 100)
@@ -327,7 +391,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
 
       animateAndNavigate(
         () => {
-          //goToNext(nextQuestionCode)
           handleNavigateNextQuestion(nextQuestionCode);
         },
         newProgressBarWidth,
@@ -335,18 +398,19 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       );
     }
   };
-  const handleDateChange = (questionCode, type, inputValue,inputIndex) => {
-    const { currentQuestion, responses } = state;
+  const handleDateChange = (questionCode, type, inputValue, inputIndex) => {
+    const { currentQuestion, responses, formProgressStep } = state;
+    const subquestions =
+      currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
+
     const currentResponse = responses[questionCode] || {
       step: currentQuestion.step,
       question:
         currentQuestion.type === "details-question" ||
         currentQuestion.type === "form-type"
-          ? currentQuestion.subquestions.find(
-              (sub) => sub.code === questionCode
-            ).text
+          ? subquestions.find((sub) => sub.code === questionCode).text
           : currentQuestion.text,
-          answerIndexes: [-1, -1, -1], // Initial indexes for day, month, year
+      answerIndexes: [-1, -1, -1], // Initial indexes for day, month, year
 
       answer: {
         day: "",
@@ -354,27 +418,26 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         year: "",
       },
     };
-     // Update the specific type (day, month, or year) in the answer
-  const updatedAnswer = {
-    ...currentResponse.answer,
-    [type]: inputValue
-  };
-  // Update the answerIndexes based on the type
-  const updatedAnswerIndexes = [...currentResponse.answerIndexes];
-  if (type === "day") {
-    updatedAnswerIndexes[0] = inputIndex;
-  } else if (type === "month") {
-    updatedAnswerIndexes[1] = inputIndex;
-  } else if (type === "year") {
-    updatedAnswerIndexes[2] = inputIndex;
-  }
-  // Update the response with the new answer
-  const updatedResponse = {
-    ...currentResponse,
-    answer: updatedAnswer,
-    answerIndexes: updatedAnswerIndexes,
-  };
-    console.log(updatedResponse);
+    // Update the specific type (day, month, or year) in the answer
+    const updatedAnswer = {
+      ...currentResponse.answer,
+      [type]: inputValue,
+    };
+    // Update the answerIndexes based on the type
+    const updatedAnswerIndexes = [...currentResponse.answerIndexes];
+    if (type === "day") {
+      updatedAnswerIndexes[0] = inputIndex;
+    } else if (type === "month") {
+      updatedAnswerIndexes[1] = inputIndex;
+    } else if (type === "year") {
+      updatedAnswerIndexes[2] = inputIndex;
+    }
+    // Update the response with the new answer
+    const updatedResponse = {
+      ...currentResponse,
+      answer: updatedAnswer,
+      answerIndexes: updatedAnswerIndexes,
+    };
 
     dispatch({
       type: actionTypes.UPDATE_RESPONSES,
@@ -383,20 +446,29 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     });
   };
 
-  const handleSelectionInputChange = (questionCode, answerIndex, type) => {
-    const { currentQuestion, responses } = state;
-    const selectedAnswer = currentQuestion.subquestions.find(
-      (sub) => sub.code === questionCode
-    ).answers[answerIndex];
+  const handleSelectionInputChange = (
+    questionCode,
+    answerIndex,
+    type = null
+  ) => {
+    const { currentQuestion, responses, formProgressStep } = state;
+    const subquestions =
+      currentQuestion.formSteps[formProgressStep - 1].subquestions;
+    let selectedAnswer =
+      type === "checkbox"
+        ? answerIndex == 0
+          ? "false"
+          : "true"
+        : subquestions.find((sub) => sub.code === questionCode).answers[
+            answerIndex
+          ];
 
     const currentResponse = responses[questionCode] || {
       step: currentQuestion.step,
       question:
         currentQuestion.type === "details-question" ||
         currentQuestion.type === "form-type"
-          ? currentQuestion.subquestions.find(
-              (sub) => sub.code === questionCode
-            ).text
+          ? subquestions.find((sub) => sub.code === questionCode).text
           : currentQuestion.text,
       answerIndexes: [],
     };
@@ -406,26 +478,28 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       answerIndexes: [answerIndex],
       answer: selectedAnswer,
     };
-
-    console.log(updatedResponse);
-
     dispatch({
       type: actionTypes.UPDATE_RESPONSES,
       questionCode: questionCode,
       response: updatedResponse,
     });
   };
-
+  const handleCheckboxChange = (questionCode, isChecked) => {
+    const { currentQuestion, responses, errResponses, formProgressStep } =
+      state;
+  };
   const handleInputChange = (questionCode, inputValue, isOther = false) => {
-    const { currentQuestion, responses, errResponses } = state;
+    const { currentQuestion, responses, errResponses, formProgressStep } =
+      state;
+    const subquestions =
+      currentQuestion.formSteps[formProgressStep - 1].subquestions;
+
     const currentResponse = responses[questionCode] || {
       step: currentQuestion.step,
       question:
         currentQuestion.type === "details-question" ||
         currentQuestion.type === "form-type"
-          ? currentQuestion.subquestions.find(
-              (sub) => sub.code === questionCode
-            ).text
+          ? subquestions.find((sub) => sub.code === questionCode).text
           : currentQuestion.text,
       answerIndexes: [],
     };
@@ -454,12 +528,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       questionCode: questionCode,
       response: updatedResponse,
     });
-    console.log("isEnabled", inputValue.trim().length > 0);
-    // dispatch({
-    //   type: actionTypes.CHANGE_NEXT_BTN_STATE,
-    //   isEnabled: inputValue.trim().length > 0,
-    // });
-    // Check if there's an existing error and clear it
+
     if (errResponses[questionCode]) {
       const newErrResponses = { ...errResponses };
 
@@ -482,11 +551,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         let answerIndex = value.answerIndexes[0];
         value.answer = answerIndex !== 0 ? value.answer.split(/[-+]/)[0] : "1";
       }
-      // if(key==="birth_date"){
-      //   const formattedAnswer = `${currentResponse.answer.day || ""}/${
-      //     currentResponse.answer.month || ""
-      //   }/${currentResponse.answer.year || ""}`;
-      // }
     });
     const selectedBrand = chooseBrand(responses);
     // console.log("selectedBrand",selectedBrand)
@@ -495,24 +559,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       acc[key] = responseWithoutIndexes;
       return acc;
     }, {});
-    // const testEmail = {
-    //   "7": "test@adptest.com",
-    //   "9": "RyzeFinalTest@paychextest.com",
-    //   "10": "test@paycortest.com"
-    // }
-    // const { selectedBrand, allScores } = calculateScores(finalResponses);
-    // console.log(selectedBrand);
-    // const selectedBrand ="9";
-    //  console.log("Selected Brand:", selectedBrand);
-    //  console.log("allScores",allScores);
-    //  console.log("Scores:", allScores);
-    // let testID='9';
-    if (selectedBrand === env.PAYCOR_FORM_ID) {
-      //  console.log("change paycor")
-      updatePaycorResponseFormat(finalResponses);
-    }
-    //  finalResponses["email"]["answer"] = testEmail[selectedBrand];
-    // finalResponses["email"]["answer"] = "sonary3@adptest.com";
 
     // console.log(finalResponses);
 

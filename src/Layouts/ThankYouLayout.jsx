@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import Loading from '@/components/UI/LazyLoading/Loading'
 import ContentLayout from "./ContentLayout";
 import ThankYou from "@/components/finalPage/ThankYou";
+import Footer from "../components/Footer/Footer";
 // Lazy loading heavier components
 const PartnerWith =React.lazy(() => import("@/components//UI/Promotional/PartnerWith"));
 const WhatsNext = React.lazy(() => import("@/components//finalPage/WhatsNext"));
@@ -17,31 +18,19 @@ const ThankYouLayout = () => {
         <ThankYou />
       </ContentLayout>
 
-      <ContentLayout bgColor={"#f6f6f6"}>
-      <Suspense fallback={<Loading />}>
 
-          <PartnerWith />
-          </Suspense>
-
-      </ContentLayout>
-
-      <ContentLayout bgColor={"#f6f6f6"}>
+      <ContentLayout bgColor={"#fff"}>
         <Suspense fallback={<Loading />}>
           <WhatsNext />
         </Suspense>
       </ContentLayout>
 
-      <ContentLayout bgColor={"rgba(0, 111, 255, 0.05)"}>
+      <ContentLayout bgColor={"#F9F7FC"}>
         <Suspense fallback={<Loading />}>
-          <BrandsLayout />
+          <Footer />
         </Suspense>
       </ContentLayout>
-
-      <ContentLayout bgColor={"#f6f6f6"}>
-        <Suspense fallback={<Loading />}>
-          <HearBack />
-        </Suspense>
-      </ContentLayout>
+   
     </>
   );
 };

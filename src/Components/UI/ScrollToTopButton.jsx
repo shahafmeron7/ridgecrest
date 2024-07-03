@@ -8,7 +8,7 @@ import {useQuestionnaire} from '@/context/QuestionnaireContext.jsx';
 import env from '@/utils/data/env';
 const ScrollToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const {currentQuestion,flowID,flowName} = useQuestionnaire();
+  const {currentQuestion,flowID,flowName,formProgressStep} = useQuestionnaire();
 
   const {osanoShown} = useContext(OsanoVisibilityContext)
   const isWideScreen = useIsWideScreen();
@@ -26,7 +26,7 @@ const ScrollToTopButton = () => {
       top: 0,
       behavior: 'smooth',
     });
-    sendImpressions(buildEventData(currentQuestion,flowID,flowName,env.USER_ACTION_CLICK_SCROLL_BTN), env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
+    sendImpressions(buildEventData(formProgressStep,currentQuestion,flowID,flowName,env.USER_ACTION_CLICK_SCROLL_BTN), env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
 
   };
 

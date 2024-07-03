@@ -1,16 +1,8 @@
-import React, { useState } from "react";
-import Dropdown from "../Dropdown.jsx"
+import React, { useState,useEffect } from "react";
+import Dropdown from "./Dropdown";
 import styles from "./DateOfBirthInput.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
-const generateDays = () => Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-const generateMonths = () => Array.from({ length: 12 }, (_, i) => (i + 1).toString());
-const generateYears = (startYear, endYear) => {
-  const years = [];
-  for (let year = startYear; year <= endYear; year++) {
-    years.push(year.toString());
-  }
-  return years;
-};
+import { generateDays,generateMonths,generateYears } from "@/utils/dateUtils";
 
 const DateOfBirthInput = ({selectedAnswerIndexes}) => {
   const [selectedDay, setSelectedDay] = useState(selectedAnswerIndexes ? selectedAnswerIndexes[0] : undefined);
@@ -18,36 +10,36 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
   const [selectedYear, setSelectedYear] = useState(selectedAnswerIndexes ? selectedAnswerIndexes[2] : undefined);
 
   const {handleDateChange}=useQuestionnaire();
-  const days = generateDays();
+  const [days, setDays] = useState(generateDays(1, 2006)); // Initialize with January and year 2006
   const months = generateMonths();
-  const years = generateYears(1900, new Date().getFullYear());
+  const years = generateYears(2006, new Date().getFullYear());
+
+   // Update days when month or year changes
+   useEffect(() => {
+    console.log("changing dates")
+    const monthIndex = selectedMonth !== undefined ? months.indexOf(months[selectedMonth]) + 1 : 1;
+    const year = selectedYear !== undefined ? parseInt(years[selectedYear], 10) : 2006;
+    setDays(generateDays(monthIndex, year));
+  }, [selectedMonth, selectedYear]);
 
   const handleDaySelect = (index) => {
+    console.log('day');
     setSelectedDay(index);
     
-    handleDateChange({
-      day: days[index],
-      month: selectedMonth !== undefined ? months[selectedMonth] : undefined,
-      year: selectedYear !== undefined ? years[selectedYear] : undefined,
-    });
   };
 
   const handleMonthSelect = (index) => {
+    console.log('month');
+
     setSelectedMonth(index);
-    handleDateChange({
-      day: selectedDay !== undefined ? days[selectedDay] : undefined,
-      month: months[index],
-      year: selectedYear !== undefined ? years[selectedYear] : undefined,
-    });
+  
   };
 
   const handleYearSelect = (index) => {
+    console.log('year');
+
     setSelectedYear(index);
-    handleDateChange({
-      day: selectedDay !== undefined ? days[selectedDay] : undefined,
-      month: selectedMonth !== undefined ? months[selectedMonth] : undefined,
-      year: years[index],
-    });
+   
   };
 
   return (
@@ -60,6 +52,7 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
         }}
         type="day"
         selectedAnswerIndex={selectedDay}
+        dateHandler={handleDaySelect}
       />
       <Dropdown
         subQuestion={{
@@ -69,6 +62,8 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
         }}
         type="month"
         selectedAnswerIndex={selectedMonth}
+        dateHandler={handleMonthSelect}
+
       />
       <Dropdown
         subQuestion={{
@@ -78,6 +73,8 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
         }}
         type="year"
         selectedAnswerIndex={selectedYear}
+        dateHandler={handleYearSelect}
+
       />
     </div>
   );

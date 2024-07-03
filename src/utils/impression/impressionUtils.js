@@ -1,7 +1,9 @@
 // src/context/questionnaire/utils/impressionUtils.js
 
-export const buildEventData = (currentQuestion, flowID,flowName, action = null) => {
-    const { step, code, text, type, subquestions } = currentQuestion;
+export const buildEventData = (formProgressStep,currentQuestion, flowID,flowName, action = null) => {
+    const { step, code, text, type,formSteps } = currentQuestion;
+    const subquestions =formSteps[formProgressStep-1].subquestions;
+
 
     let questionsData;
     if (type === "details-question" || type === "form-type") {
@@ -12,9 +14,12 @@ export const buildEventData = (currentQuestion, flowID,flowName, action = null) 
     } else {
       questionsData = [{ code, text }];
     }
+    const currentStep = step >=10 ? step : `0${step}`
+    //if this is final step we sent only step without progress of the form substeps.
+    const eventStep = code==="thank_you" ? currentStep : `${currentStep}${formProgressStep}`
     const eventData = {
       context: {
-        step,
+        step:eventStep,
         questions: questionsData,
         flow_id: flowID,
         flow_name: flowName,

@@ -1,26 +1,19 @@
 import React from "react";
 import styles from "./AnswersContent.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
-import InputWithValidation from "@/components/UI/Form/InputWithValidation";
+import InputWithValidation from "@/components/UI/Form/inputs/InputWithValidation";
 import useIsWideScreen from "@/hooks/useIsWideScreen";
-import InputSelection from "@/components/UI/Form/InputSelection";
-import Dropdown from "@/components/UI/Form/Dropdown";
+import InputSelection from "@/components/UI/Form/inputs/InputSelection";
+import Dropdown from "@/components/UI/Form/inputs/Dropdown";
 import DateOfBirthInput from "@/components/UI/Form/inputs/DateOfBirthInput";
 import PercentageInput from "@/components/UI/Form/inputs/PercentageInput";
+import CheckboxInput from "@/components/UI/Form/inputs/CheckboxInput";
 
 const DetailsQuestion = () => {
   const { currentQuestion, responses, errResponses,formProgressStep, currentQuestionCode } = useQuestionnaire();
   const isWideScreen = useIsWideScreen();
-  const isFinalStep = currentQuestionCode === "phone";
-  const isPersonalAndBusinessInfo = currentQuestionCode === "personal_and_business_info";
 
-  const FinalStepTitle = ({ text }) => (
-    <div className={styles.finalStepTitleWrapper}>
-      <h1 className={styles.finalStepTitle}>Final Step</h1>
-      <h4 className={styles.inputTitle}>{text}</h4>
-    </div>
-  );
-
+  
   const renderInputField = (sub) => {
     const commonProps = {
       name: sub.code,
@@ -45,6 +38,8 @@ const DetailsQuestion = () => {
         return <InputSelection subQuestion={sub} selectedAnswerIndex={responses[sub.code]?.answerIndexes[0]} />;
       case 'percentage':
         return <PercentageInput subQuestion={sub} isError={errResponses[sub.code] || false} />;
+      case 'checkbox':
+        return <CheckboxInput subQuestion={sub} isChecked={responses[sub.code]?.answerIndexes[0]}/>
       default:
         return null;
     }
@@ -52,25 +47,20 @@ const DetailsQuestion = () => {
   const subquestions = currentQuestion.formSteps[formProgressStep-1].subquestions;
   return (
     <div
-      key={currentQuestionCode}
-      className={`animateFadeOut ${styles.inputsContainer} ${
-        isPersonalAndBusinessInfo && isWideScreen ? styles.specialLayout : ""
-      }`}
-    >
-     
-
+      key={`${currentQuestionCode}-${formProgressStep}`}
+      className={`animateFadeIn animateFadeOut ${styles.inputsContainer}`}>
+    
       {subquestions.map((sub, index) => (
         <div
           key={`${sub.code}-${index}`}
-          className={`animateStaggerItem ${styles.inputWrapper} ${
-            isPersonalAndBusinessInfo && isWideScreen && index < 2 ? styles.rowChild : ""
-          }`}
-          style={sub.code === 'company_name' ? { width: "100%" } : {}}
+          className={`animateStaggerItem ${styles.inputWrapper}`}
+
         >
-          {isFinalStep ? <FinalStepTitle text={sub.text} /> : <h4 className={styles.inputTitle}>{sub.text}</h4>}
+        {sub.element!=="checkbox" && <h4 className={styles.inputTitle}>{sub.text}</h4>}
           {renderInputField(sub)}
         </div>
       ))}
+    {/* <CheckboxInput/> */}
     </div>
   );
 };

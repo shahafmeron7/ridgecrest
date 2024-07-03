@@ -29,7 +29,9 @@ const WhatsNext = () => {
       
         return (
           <div className={styles.card}>
-            <img src={card.src} alt={card.alt} className={styles.cardIcon} loading="lazy" />
+          <div className={styles.imgContainer}>
+            <img src={card.src} alt={card.alt} className={styles.cardIcon} loading="lazy" width="80" height="80" />
+          </div>
             <div className={styles.cardInfoWrapper}>
               <h3 className={styles.cardTitle}>{card.title}</h3>
               <p className={styles.cardInfo}>

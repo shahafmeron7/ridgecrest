@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import styles from './Dropdown.module.css'
 import { useQuestionnaire } from '@/context/QuestionnaireContext';
-const Dropdown = ({ subQuestion,type=null,selectedAnswerIndex }) => {
+const Dropdown = ({ subQuestion,type=null,selectedAnswerIndex,dateHandler=null }) => {
   
   const [selectedIndex, setSelectedIndex] = useState(selectedAnswerIndex);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -13,6 +13,7 @@ const Dropdown = ({ subQuestion,type=null,selectedAnswerIndex }) => {
     setDropdownOpen(false);
     //if its birthdate input, sending the type and the selection. e.g 'day' and '12'
     if(type){
+      dateHandler(index);
       handleDateChange(questionCode,type,subQuestion.answers[index],index)
     }else{
       //regular dropdown 

@@ -32,6 +32,7 @@ const QuestionnaireButtons = () => {
     currentQuestion,
     flowID,
     flowName,
+    formProgressStep
   } = useQuestionnaire();
   const isFinalStep = currentQuestionCode === "personal_information";
 
@@ -67,7 +68,7 @@ const QuestionnaireButtons = () => {
     nextBtnEnabled,
   ]);
   const handlePrevClick =()=>{
-    sendImpressions(buildEventData(currentQuestion,flowID,flowName,USER_ACTION_CLICK_PREV), USER_EVENT_NAME, STREAM_STEP_NAME);
+    sendImpressions(buildEventData(formProgressStep,currentQuestion,flowID,flowName,USER_ACTION_CLICK_PREV), USER_EVENT_NAME, STREAM_STEP_NAME);
     moveToPrevQuestion();
   }
 
@@ -80,21 +81,25 @@ const QuestionnaireButtons = () => {
   };
   return (
     <div
-      key={currentQuestionCode}
-      className={`animateStaggerItem animateFadeOut ${styles.buttonsWrapper}`}
+      key={`${currentQuestionCode}-${formProgressStep}`}
+      className={`animateStaggerItem animateFadeIn animateFadeOut ${styles.buttonsWrapper}`}
       style={questionnaireStarted && !isWideScreen ? mobileButtonsStyle : {}}
     >
-      {questionHistory.length > 1 && (
-        <button className={styles.prevBtn} onClick={handlePrevClick} disabled={isAnimatingOut}>
+      {questionnaireStarted &&  (
+        <button         
+        className={styles.prevBtn}
+         onClick={handlePrevClick} disabled={isAnimatingOut}>
         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
   <path fillRule="evenodd" clipRule="evenodd" d="M14.0669 3.30806C14.311 3.55214 14.311 3.94786 14.0669 4.19194L8.25888 10L14.0669 15.8081C14.311 16.0521 14.311 16.4479 14.0669 16.6919C13.8229 16.936 13.4271 16.936 13.1831 16.6919L6.93306 10.4419C6.81585 10.3247 6.75 10.1658 6.75 10C6.75 9.83424 6.81585 9.67527 6.93306 9.55806L13.1831 3.30806C13.4271 3.06398 13.8229 3.06398 14.0669 3.30806Z" fill="#323738"/>
 </svg>
         </button>
       )}
+      
       <button
-        className={`${styles.nextBtn} ${
-          inputModified || nextBtnEnabled ? styles.enabled : ""
-        }`}
+        className={`${styles.nextBtn} ${questionnaireStarted ? styles.nextBtnWithPrev : styles.nextBtnFullWidth} ${inputModified || nextBtnEnabled ? styles.enabled : ""}`}
+        // className={`${styles.nextBtn} ${
+        //   inputModified || nextBtnEnabled ? styles.enabled : ""
+        // }`}
         onClick={() =>
            handleNextButtonClick()
         }

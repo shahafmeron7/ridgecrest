@@ -3,9 +3,9 @@ import * as actionTypes from '@/reducers/actionTypes'
 import { useEffect } from 'react';
 
 export const useQuestionnaireState = (state,dispatch,completeQuestionnaire) => {
-     const { currentQuestion, currentQuestionCode } = state;
+     const { currentQuestion, currentQuestionCode,formProgressStep } = state;
     useEffect(() => {
-        if (currentQuestion?.step > 1) {
+        if (currentQuestion?.step > 1 || (currentQuestion?.step === 1 && formProgressStep > 1)) {
             dispatch({ type: actionTypes.TOGGLE_QUESTIONNAIRE_STARTED, payload: true });
         } else {
             dispatch({ type: actionTypes.TOGGLE_QUESTIONNAIRE_STARTED, payload: false });
@@ -16,5 +16,5 @@ export const useQuestionnaireState = (state,dispatch,completeQuestionnaire) => {
         } else {
             dispatch({ type: actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED, payload: false });
         }
-    }, [currentQuestion, currentQuestionCode, dispatch,completeQuestionnaire]);
+    }, [currentQuestion, currentQuestionCode,formProgressStep, dispatch,completeQuestionnaire]);
 };

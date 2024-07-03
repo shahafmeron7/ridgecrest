@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react';
-import styles from '../InputWithValidation.module.css'
+import styles from './InputWithValidation.module.css'
 import {useQuestionnaire} from '@/context/QuestionnaireContext.jsx'
 import InputError from './InputError';
 const PercentageInput = ({subQuestion,isError}) => {

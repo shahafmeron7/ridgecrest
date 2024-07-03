@@ -1,0 +1,17 @@
+.checkboxContainer {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--black-color-1);
+}
+.checkbox{
+ cursor: pointer;
+}
+
+.link{
+   text-decoration: underline;
+   color: #004AD9;
+}

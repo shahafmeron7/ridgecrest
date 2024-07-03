@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from '../InputWithValidation.module.css'
+import styles from './InputWithValidation.module.css'
 const InputError = ({error,message}) => {
   return (
    <div

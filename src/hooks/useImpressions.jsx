@@ -21,10 +21,10 @@ export const useFirstImpression = () => {
 };
 
 export const useQuestionImpressions = (state) => {
-    const  { currentQuestionCode,currentQuestion,flowID,flowName } =state 
+    const  { currentQuestionCode,formProgressStep,currentQuestion,flowID,flowName } =state 
     useEffect(() => {
         sendImpressions(
-            buildEventData(currentQuestion,flowID,flowName),
+            buildEventData(formProgressStep,currentQuestion,flowID,flowName),
             env.STEP_EVENT_NAME,
             env.STREAM_STEP_NAME
         );
@@ -32,13 +32,13 @@ export const useQuestionImpressions = (state) => {
 };
 
 export const useUnloadImpressions = (state) => {
-    const  { currentQuestion,flowID,flowName } = state 
+    const  { currentQuestion,flowID,formProgressStep,flowName } = state 
 
     useEffect(() => {
         const handleUnload = (e) => {
             // e.preventDefault();
             sendImpressions(
-                buildEventData(currentQuestion,flowID,flowName,env.USER_ACTION_EXIT),
+                buildEventData(formProgressStep,currentQuestion,flowID,flowName,env.USER_ACTION_EXIT),
                 env.USER_EVENT_NAME,
                 env.STREAM_STEP_NAME
             );

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./InputWithValidation.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import gsap from "gsap";
-import InputError from "./inputs/InputError";
+import InputError from "./InputError";
 import formatInputValue  from "@/utils/formatUtils";
 
 const InputWithValidation = React.forwardRef(

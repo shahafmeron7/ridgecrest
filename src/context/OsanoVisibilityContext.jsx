@@ -11,7 +11,7 @@ export const OsanoVisibilityContext = createContext({
 
 export const OsanoVisibilityProvider = ({ children }) => {
   const [osanoShown, setOsanoShown] = useState(false);
-  const  { currentQuestion,flowID,flowName } =useQuestionnaire(); 
+  const  { currentQuestion,flowID,flowName,formProgressStep } =useQuestionnaire(); 
   const currentQuestionRef = useRef(currentQuestion);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export const OsanoVisibilityProvider = ({ children }) => {
 
        const handleAcceptClick = () => {
          sendImpressions(
-           buildEventData(currentQuestionRef.current, flowID, flowName, env.USER_ACTION_CLICK_ACCEPT_COOKIES),
+           buildEventData(formProgressStep,currentQuestionRef.current, flowID, flowName, env.USER_ACTION_CLICK_ACCEPT_COOKIES),
            env.USER_EVENT_NAME,
            env.STREAM_STEP_NAME
          );
@@ -50,7 +50,7 @@ export const OsanoVisibilityProvider = ({ children }) => {
 
        const handleDenyClick = () => {
          sendImpressions(
-           buildEventData(currentQuestionRef.current, flowID, flowName, env.USER_ACTION_CLICK_DENY_COOKIES),
+           buildEventData(formProgressStep,currentQuestionRef.current, flowID, flowName, env.USER_ACTION_CLICK_DENY_COOKIES),
            env.USER_EVENT_NAME,
            env.STREAM_STEP_NAME
          );

@@ -94,7 +94,7 @@
     background-position: 0 0;
   }
   100% {
-    background-position: -200px 0;
+    background-position: 200px 0;
   }
 }
 @media only screen and (max-width: 767px) {

@@ -2,10 +2,10 @@ import React from 'react'
 import styles from '@/components/Questionnaire/Questionnaire.module.css'
 import { useQuestionnaire } from "@/context/QuestionnaireContext";
 const QuestionnaireTitle = () => {
-    const {currentQuestionCode} = useQuestionnaire();
+    const {currentQuestionCode,currentQuestion} = useQuestionnaire();
     return (
       <div key={currentQuestionCode} className={`${styles.titleWrapper}`}>
-      <h1 className={styles.title}>Get Funded in a Few Easy Steps</h1>
+      <h1 className={styles.title}>{currentQuestion.text}</h1>
       {/* <h2 className={styles.titleDescription}>Just a few questions to find your match</h2> */}
     </div>
     );

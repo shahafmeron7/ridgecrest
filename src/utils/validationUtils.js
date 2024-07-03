@@ -16,7 +16,8 @@ function isValidAddress(address){
 }
 function validateURL(url) {
 
-  const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}\/?([a-zA-Z0-9-._~:@!$&'()*+,;=]*)?$/;
+  const regex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+\/?([a-zA-Z0-9-._~:@!$&'()*+,;=]*)?$/;
+
   console.log('url validation', regex)
   return regex.test(url);
 }
@@ -25,7 +26,7 @@ function validateName(name) {
   return regex.test(name);
 }
 function validateSSN(ssn) {
-  const regex = /^(?!666|000|9\d{2})\d{3}(?!00)\d{2}(?!0000)\d{4}$/;
+  const regex = /^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0000)\d{4}$/;
   return regex.test(ssn);
 }
 function validateTaxID(taxId){
