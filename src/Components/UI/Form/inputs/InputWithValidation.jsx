@@ -28,8 +28,10 @@ const InputWithValidation = React.forwardRef(
 
     const { handleInputChange } = useQuestionnaire();
     const [inputValue, setInputValue] = useState(value);
+
     const [error, setError] = useState(isError);
     useEffect(() => {
+      // console.log('iserror inputvalidation')
       setError(isError);
     }, [isError]);
 
@@ -81,7 +83,6 @@ const InputWithValidation = React.forwardRef(
     )
       ? "numeric"
       : "text";
-
     return (
       <div className={styles.inputContainer}>
         {inputType === "input" ? (

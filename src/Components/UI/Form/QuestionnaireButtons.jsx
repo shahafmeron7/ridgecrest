@@ -2,7 +2,6 @@ import React, { useEffect,useCallback,useContext } from "react";
 import styles from "../../Questionnaire/Questionnaire.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import useIsWideScreen from "@/hooks/useIsWideScreen";
-import arrowTop from '@/images/chevronTop.svg?url'
 
 import { buildEventData,sendImpressions } from "@/utils/impression/impressionUtils";
 import env from '@/utils/data/env';
@@ -34,7 +33,19 @@ const QuestionnaireButtons = () => {
     flowName,
     formProgressStep
   } = useQuestionnaire();
-  const isFinalStep = currentQuestionCode === "personal_information";
+
+  const appVersion = import.meta.env.VITE_APP_VERSION;
+  const finalQuestionCode = appVersion === 'long' ?   'personal_information' : 'business_information';
+  //to indicate if its the last substep as well.
+  const isFinalStep = formProgressStep == currentQuestion.formSteps?.length;
+  
+  
+
+  const buttonText = !questionnaireStarted
+    ? "Let's start"
+    : currentQuestionCode === finalQuestionCode && isFinalStep
+    ? 'Submit'
+    : 'Next';
 
   const handleNextButtonClick = useCallback(() => {
     if (!isAnimatingOut) {
@@ -74,6 +85,7 @@ const QuestionnaireButtons = () => {
 
   const mobileButtonsStyle = {
     position: "fixed",
+    zIndex:1000,
     bottom: (osanoShown && questionnaireStarted && !isWideScreen) ? '88px' : '0px',
     width: "100%",
     backgroundColor: "#fff",
@@ -107,7 +119,8 @@ const QuestionnaireButtons = () => {
           isAnimatingOut || !nextBtnEnabled
         }
       >
-        {!questionnaireStarted ? "Let's start" : isFinalStep ? "Submit" : "Next"}
+      {buttonText}
+        {/* {!questionnaireStarted ? "Let's start" : isFinalStep ? "Submit" : "Next"} */}
       </button>
     </div>
   );

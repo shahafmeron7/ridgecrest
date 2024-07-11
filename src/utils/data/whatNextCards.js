@@ -23,7 +23,7 @@ export const cards = [
       info: "We're here for you if you need anything throughout the lending process. Feel free to call us or send an email with any questions or concerns to hello@ridgecrestfg.com and we'll get back to you as soon as possible.",
       src: countonusIcon,
       bolds:[],
-
+      email:['hello@ridgecrestfg.com'],
       alt: "Hands icon",
 
     },

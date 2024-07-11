@@ -16,6 +16,7 @@ export const OsanoVisibilityProvider = ({ children }) => {
 
   useEffect(() => {
    currentQuestionRef.current = currentQuestion;
+  //  console.log('osano current effect')
  }, [currentQuestion]);
 
  useEffect(() => {

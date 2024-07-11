@@ -5,10 +5,18 @@
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
+  flex-direction: column;
   color: var(--black-color-1);
+}
+
+.checkboxWrapper{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
 }
 .checkbox{
  cursor: pointer;
+ margin-top: 3px;
 }
 
 .link{

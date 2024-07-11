@@ -4,21 +4,21 @@ import svgrPlugin from "vite-plugin-svgr";
 import envCompatible from "vite-plugin-env-compatible";
 import { fileURLToPath, URL } from "node:url";
 
-const productionBaseURL = "/compare/quotes/payroll-services/";
+const productionBaseURL = "/application/";
 const developmentBaseURL = "/";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
-
-  const isProduction = process.env.NODE_ENV === 'production';
-  console.log(isProduction)
-  const base = isProduction ? productionBaseURL : developmentBaseURL
-
+  const env = loadEnv(mode, process.cwd(),'');
+console.log(env)
+  // const isProduction =env.NODE_ENV === 'production';
+  // console.log(isProduction)
+  // const base = isProduction ? productionBaseURL : developmentBaseURL
+const base = env.VITE_BASE_URL || "/";
 
 
   return {
-    envPrefix: "REACT_APP_",
+    envPrefix: "VITE_",
     // This changes the out put dir from dist to build
     // comment this out if that isn't relevant for your project
 

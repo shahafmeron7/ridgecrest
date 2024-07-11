@@ -45,7 +45,7 @@ function sendLeadgenImpression(data, eventName,stream,formID=null) {
       ...(formID !== null && { form: formID })
     },
     event: eventName,
-    api: "sonary.com",
+    api: "ridgecrestfg.com",
     stream: stream,
   };
   let logEvent = new CustomEvent("ry_send_log", {
@@ -53,6 +53,10 @@ function sendLeadgenImpression(data, eventName,stream,formID=null) {
     bubbles: true,
     composed: false,
   });
-  console.log(to_send)
-    // window.dispatchEvent(logEvent);
+  if (import.meta.env.PROD) {
+    window.dispatchEvent(logEvent);
+  }
+  else{
+      console.log(to_send)
+  }
 }

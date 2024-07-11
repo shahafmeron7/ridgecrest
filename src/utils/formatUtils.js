@@ -1,4 +1,5 @@
-const formatPhoneNumber = (value) => {
+// console.log('value',value)
+export const formatPhoneNumber = (value) => {
    const phoneNumber = value.replace(/[^\d]/g, "");
    const phoneNumberLength = phoneNumber.length;
  

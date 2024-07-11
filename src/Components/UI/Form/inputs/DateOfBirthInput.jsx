@@ -1,58 +1,78 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import styles from "./DateOfBirthInput.module.css";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
-import { generateDays,generateMonths,generateYears } from "@/utils/dateUtils";
+import {
+  generateDays,
+  generateMonths,
+  generateMonthsMobile,
+  generateYears,
+} from "@/utils/dateUtils";
+import useIsWideScreen from "@/hooks/useIsWideScreen";
+import InputError from "./InputError";
 
-const DateOfBirthInput = ({selectedAnswerIndexes}) => {
-  const [selectedDay, setSelectedDay] = useState(selectedAnswerIndexes ? selectedAnswerIndexes[0] : undefined);
-  const [selectedMonth, setSelectedMonth] = useState(selectedAnswerIndexes ? selectedAnswerIndexes[1] : undefined);
-  const [selectedYear, setSelectedYear] = useState(selectedAnswerIndexes ? selectedAnswerIndexes[2] : undefined);
+const DateOfBirthInput = ({ selectedAnswerIndexes ,isError,errorMessage}) => {
+  const isWideScreen = useIsWideScreen();
+  const [error, setError] = useState(isError);
 
-  const {handleDateChange}=useQuestionnaire();
-  const [days, setDays] = useState(generateDays(1, 2006)); // Initialize with January and year 2006
-  const months = generateMonths();
-  const years = generateYears(2006, new Date().getFullYear());
+  const [selectedDay, setSelectedDay] = useState(
+    selectedAnswerIndexes[0]
+  );
+  const [selectedMonth, setSelectedMonth] = useState(
+    selectedAnswerIndexes[1]
+  );
+  const [selectedYear, setSelectedYear] = useState(
+    selectedAnswerIndexes[2]
+  );
+  const [days, setDays] = useState(generateDays(1, 1920)); // Initialize with January and year 2006
 
-   // Update days when month or year changes
-   useEffect(() => {
-    console.log("changing dates")
-    const monthIndex = selectedMonth !== undefined ? months.indexOf(months[selectedMonth]) + 1 : 1;
-    const year = selectedYear !== undefined ? parseInt(years[selectedYear], 10) : 2006;
-    setDays(generateDays(monthIndex, year));
+  const { handleDateChange } = useQuestionnaire();
+  const months = isWideScreen ? generateMonths() : generateMonthsMobile();
+  const years = generateYears(1920, 2006);
+  useEffect(() => {
+    setError(isError);
+  }, [isError]);
+  // Update days when month or year changes
+  useEffect(() => {
+    
+    const monthIndex =
+      selectedMonth >=0
+        ? months.indexOf(months[selectedMonth]) + 1
+        : 1;
+    const year =
+      selectedYear >=0 ? parseInt(years[selectedYear], 10) : 2006;
+
+        setDays(generateDays(monthIndex, year))
+   
   }, [selectedMonth, selectedYear]);
 
   const handleDaySelect = (index) => {
-    console.log('day');
     setSelectedDay(index);
-    
   };
 
   const handleMonthSelect = (index) => {
-    console.log('month');
-
     setSelectedMonth(index);
-  
   };
 
   const handleYearSelect = (index) => {
-    console.log('year');
-
     setSelectedYear(index);
-   
   };
 
   return (
     <div className={styles.dateOfBirthContainer}>
+    <div className={styles.dobList}>
+
       <Dropdown
         subQuestion={{
           code: "birth_date",
           example: "Day",
           answers: days,
         }}
+        
         type="day"
         selectedAnswerIndex={selectedDay}
         dateHandler={handleDaySelect}
+        
       />
       <Dropdown
         subQuestion={{
@@ -63,7 +83,7 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
         type="month"
         selectedAnswerIndex={selectedMonth}
         dateHandler={handleMonthSelect}
-
+    
       />
       <Dropdown
         subQuestion={{
@@ -74,8 +94,12 @@ const DateOfBirthInput = ({selectedAnswerIndexes}) => {
         type="year"
         selectedAnswerIndex={selectedYear}
         dateHandler={handleYearSelect}
-
+   
       />
+    </div>
+
+          <InputError error={error} message={errorMessage} />
+
     </div>
   );
 };

@@ -1,16 +1,17 @@
-import * as actionTypes from './actionTypes'
-import questionnaireData from "../utils/data/questionnaireData.js";
+import * as actionTypes from "./actionTypes";
+import questionnaireData from "@/utils/data/questionnaire/index.js";
 export const initialState = () => {
+ 
   const initialQuestionCode = questionnaireData.questions[0]?.code;
   const currentQuestion = questionnaireData.questions.find(
     (q) => q.code === initialQuestionCode
   );
-  const formQuestions =questionnaireData.questions.filter(
-    (q) => q.type === 'form-type'
+  const formQuestions = questionnaireData.questions.filter(
+    (q) => q.type === "form-type"
   );
   const flowID = questionnaireData.flow_id;
   const flowName = questionnaireData.flow_name;
-
+  // const paramsResponses = isRedirectParams()
   return {
     currentQuestion: currentQuestion || {},
     formQuestions: formQuestions || {},
@@ -25,8 +26,13 @@ export const initialState = () => {
     inputModified: false,
     nextBtnEnabled: false,
     progressBarWidth: 0,
+    dropdownPaddingNeeded: false,
+    paddingValue:0,
+    responsesUpdated: false, //first rendering responses updated with params.
+
     flowID,
     flowName,
+    initialResponsesSet:false,
   };
 };
 
@@ -46,11 +52,11 @@ export function reducer(state, action) {
         ...state,
         questionHistory: [...state.questionHistory, action.payload],
       };
-      case actionTypes.UPDATE_FORM_PROGRESS_STEP:
-        return {
-          ...state,
-          formProgressStep: action.payload,
-        };
+    case actionTypes.UPDATE_FORM_PROGRESS_STEP:
+      return {
+        ...state,
+        formProgressStep: action.payload,
+      };
     case actionTypes.SET_QUESTION_HISTORY:
       return {
         ...state,
@@ -63,6 +69,18 @@ export function reducer(state, action) {
         ...state,
         isAnimatingOut: action.payload,
       };
+    case actionTypes.SET_RESPONSES:
+      //  console.log('setting responses to true')
+
+      return {
+        ...state,
+        responses: {
+          ...state.responses,
+          ...action.payload,
+        },
+        initialResponsesSet: true, // Set to true when initial responses are set
+
+      };
     case actionTypes.UPDATE_RESPONSES:
       return {
         ...state,
@@ -70,8 +88,10 @@ export function reducer(state, action) {
           ...state.responses,
           [action.questionCode]: action.response,
         },
-      };
+      
 
+      };
+   
     case actionTypes.SET_ERR_RESPONSES:
       return {
         ...state,
@@ -94,6 +114,12 @@ export function reducer(state, action) {
 
     case actionTypes.SET_INPUT_MODIFIED:
       return { ...state, inputModified: action.payload };
+    case actionTypes.UPDATE_DROPDOWN_PADDING:
+      return {
+        ...state,
+        dropdownPaddingNeeded: action.payload.isNeeded,
+        paddingValue: action.payload.paddingValue,
+      };
 
     default:
       return state;

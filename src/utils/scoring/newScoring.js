@@ -1,4 +1,5 @@
-import questionnaireData from '@/utils/data/questionnaireData.js';
+import questionnaireData from "@/utils/data/questionnaire/index.js";
+
 
 // Helper function to perform weighted random selection
 function weightedRandom(data) {

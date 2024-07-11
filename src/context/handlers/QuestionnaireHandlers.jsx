@@ -3,7 +3,7 @@ import * as actionTypes from "./../../reducers/actionTypes.js";
 import { useCallback } from "react";
 import { validateField } from "@/utils/validationUtils";
 import { gsap } from "gsap";
-import questionnaireData from "@/utils/data/questionnaireData.js";
+import questionnaireData from "@/utils/data/questionnaire/index";
 import {
   buildEventData,
   sendImpressions,
@@ -19,12 +19,18 @@ export const QuestionnaireHandlers = (state, dispatch) => {
   const findQuestion = (questionCode) => {
     return questionnaireData.questions.find((q) => q.code === questionCode);
   };
-  const animateAndNavigate = (onComplete, nextProgressWidth=null, delay = 0) => {
+  const animateAndNavigate = (
+    onComplete,
+    nextProgressWidth = null,
+    delay = 0
+  ) => {
     dispatch({ type: actionTypes.SET_IS_ANIMATING_OUT, payload: true });
     const tl = gsap.timeline({
       onComplete: () => {
         dispatch({ type: actionTypes.SET_IS_ANIMATING_OUT, payload: false });
         onComplete();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
       },
     });
 
@@ -43,33 +49,10 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       },
       `+=0.1`
     );
+    
   };
-  // const moveToPrevQuestion = () => {
-  //   const { questionHistory,formProgressStep } = state;
-  //   if (questionHistory.length > 1) {
-  //     const newHistory = questionHistory.slice(0, -1);
-  //     const prevQuestionCode = newHistory[newHistory.length - 1];
-  //     const prevStep = findStepNumber(prevQuestionCode);
-  //     const newProgressBarWidth = Math.min(
-  //       100,
-  //       Math.round(((prevStep - 1) / (4 - 1)) * 100)
-  //     );
 
-  //     dispatch({
-  //       type: actionTypes.SET_PROGRESS_BAR_WIDTH,
-  //       payload: newProgressBarWidth,
-  //     });
-  //     animateAndNavigate(() => {
-  //       dispatch({
-  //         type: actionTypes.SET_CURRENT_QUESTION_CODE,
-  //         payload: prevQuestionCode,
-  //       });
-  //     }, newProgressBarWidth);
-
-  //     dispatch({ type: actionTypes.SET_QUESTION_HISTORY, payload: newHistory });
-  //   }
-  // };
-  const moveToPrevQuestion = () => {
+  const moveToPrevQuestion = (isBrowserBack = false) => {
     const { questionHistory, formProgressStep, currentQuestion } = state;
 
     if (formProgressStep > 1) {
@@ -84,16 +67,14 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       // If there are no previous form steps, move back to the previous general question
       const newHistory = questionHistory.slice(0, -1);
       const prevQuestionCode = newHistory[newHistory.length - 1];
+
       const prevQuestion = findQuestion(prevQuestionCode);
       const prevStep = prevQuestion.step;
       const newProgressBarWidth = Math.min(
         100,
         Math.round(((prevStep - 1) / (4 - 1)) * 100)
       );
-      // dispatch({
-      //   type: actionTypes.SET_PROGRESS_BAR_WIDTH,
-      //   payload: newProgressBarWidth,
-      // });
+
       animateAndNavigate(() => {
         dispatch({
           type: actionTypes.SET_CURRENT_QUESTION_CODE,
@@ -106,24 +87,20 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       }, newProgressBarWidth);
 
       dispatch({ type: actionTypes.SET_QUESTION_HISTORY, payload: newHistory });
+      // if (!isBrowserBack) {
+      //   window.history.pushState({ questionCode: prevQuestionCode }, null, " ");
+      // }
     }
   };
 
   const moveToNextQuestion = () => {
     let proceedToNext = true;
     let nextQuestionCode;
-    const {
-      currentQuestion,
-      currentQuestionCode,
-      responses,
-      flowID,
-      flowName,
-      formProgressStep,
-    } = state;
+    const { currentQuestion, responses, flowID, flowName, formProgressStep } =
+      state;
     const newErrResponses = {};
     const subquestions =
       currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
-    // console.log('im here subquestions move tonext questions',subquestions)
 
     if (
       currentQuestion.type === "details-question" ||
@@ -131,10 +108,13 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     ) {
       subquestions.forEach((sub) => {
         const response = responses[sub.code]?.answer;
-
         if (sub.element === "input" || sub.element === "free_text") {
-          console.log("validation input code", sub.validationCode);
+          // console.log("validation input code", sub.validationCode);
+          // console.log("sub.validationCode, response",sub.validationCode, response)
+          // console.log("response input",response)
           if (!validateField(sub.validationCode, response)) {
+            // console.log("notvalid input",response)
+
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
           }
@@ -145,15 +125,49 @@ export const QuestionnaireHandlers = (state, dispatch) => {
             response.trim() === ""
           ) {
             proceedToNext = false;
-            // newErrResponses[sub.code] = true; // Set error for this sub-question
+            newErrResponses[sub.code] = true; // Set error for this sub-question
           }
-          console.log("dropdown/selection proceedToNext", proceedToNext);
+          // console.log("dropdown/selection proceedToNext", proceedToNext);
+        } else if (sub.element === "checkbox") {
+          if (
+            response === null ||
+            response === undefined ||
+            response === "false" ||
+            response.trim() === ""
+          ) {
+            // console.log('checkbox',response)
+
+            proceedToNext = false;
+            newErrResponses[sub.code] = true; // Set error for this sub-question
+
+          }
+        }else if(sub.element==="birthdate"){
+          // console.log(response);
+           if(!Object.keys(response).every(key => response[key] !== '')){
+            proceedToNext = false;
+            newErrResponses[sub.code] = true; 
+          }
+          
         }
+        else if (sub.element === "percentage") {
+          if (
+            response === null ||
+            response === undefined ||
+            response.trim() === ""
+          ) {
+             console.log('percentage',response)
+
+            proceedToNext = false;
+            newErrResponses[sub.code] = true; // Set error for this sub-question
+
+          }
+        }
+
       });
 
       nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
 
-      console.log("movetonextquestion", proceedToNext);
+      // console.log("movetonextquestion", proceedToNext);
     } else if (currentQuestion.type === "one-selection") {
       const response = responses[currentQuestion.code];
       if (response && response.answerIndexes) {
@@ -214,8 +228,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
             100, // need to replace this with progress with (old leadgens). for now it does not matter.
             TIME_DELAY_NEXT_QUESTION
           );
-
-         
         }
       }
       const eventData = buildEventData(
@@ -237,6 +249,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
   };
 
   const handleNavigateNextQuestion = (nextQuestionCode) => {
+    // console.log('im navigating next with ;',nextQuestionCode)
     if (nextQuestionCode !== "loader") {
       dispatch({
         type: actionTypes.APPEND_TO_QUESTION_HISTORY,
@@ -248,6 +261,8 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       payload: nextQuestionCode,
     });
     window.history.pushState({}, null, " ");
+    // window.history.pushState({ questionCode: nextQuestionCode }, null, " ");
+
   };
 
   const handleMultipleAnswerSelection = (questionCode, selectedIndexes) => {
@@ -286,28 +301,35 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         const response = responses[sub.code];
 
         // Check for different input types
-        if (sub.element === "input" || sub.element === "free_text") {
+        if (sub.element === "input" || sub.element === "free_text" || sub.element==="percentage") {
           return response && response.answer && response.answer.trim() !== "";
-        } else if (sub.element === "dropdown" || sub.element === "selection") {
-          return response && response.answer !== null && response.answer !== "";
-        } else if (sub.element === "birthdate") {
-          return (
-            response &&
-            response.answer &&
-            response.answer.day !== "" &&
-            response.answer.month !== "" &&
-            response.answer.year !== ""
-          );
-        } else if (sub.element === "checkbox") {
-          return (
-            response &&
-            response.answer &&
-            response.answer.trim() !== "" &&
-            response.answer != "false"
-          );
-        }
+        } 
+         else if (sub.element === "dropdown" || sub.element === "selection") {
+           return response && response.answer !== null && response.answer !== "";
+        } 
+         else if (sub.element === "birthdate") {
+           return (
+             response &&
+             response.answer && (
+
+               response.answer.day !== "" ||
+               response.answer.month !== "" ||
+               response.answer.year !== ""
+              )
+           );
+         } 
+        
+        return true;
+        // else if (sub.element === "checkbox") {
+        //   return (
+        //     response &&
+        //     response.answer &&
+        //     response.answer.trim() !== "" &&
+        //     response.answer != "false"
+        //   );
+        // }
         // Fallback to default check for other types
-        return response && response.answer && response.answer.trim() !== "";
+        // return response && response.answer && response.answer.trim() !== "";
       });
       dispatch({
         type: actionTypes.CHANGE_NEXT_BTN_STATE,
@@ -399,7 +421,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     }
   };
   const handleDateChange = (questionCode, type, inputValue, inputIndex) => {
-    const { currentQuestion, responses, formProgressStep } = state;
+    const { currentQuestion, responses,errResponses, formProgressStep } = state;
     const subquestions =
       currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
 
@@ -444,6 +466,16 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       questionCode: questionCode,
       response: updatedResponse,
     });
+    if (errResponses[questionCode]) {
+      const newErrResponses = { ...errResponses };
+
+      delete newErrResponses[questionCode]; // Remove the error entry for this question
+
+      dispatch({
+        type: actionTypes.SET_ERR_RESPONSES,
+        payload: newErrResponses,
+      });
+    }
   };
 
   const handleSelectionInputChange = (
@@ -451,7 +483,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     answerIndex,
     type = null
   ) => {
-    const { currentQuestion, responses, formProgressStep } = state;
+    const { currentQuestion, responses,errResponses, formProgressStep } = state;
     const subquestions =
       currentQuestion.formSteps[formProgressStep - 1].subquestions;
     let selectedAnswer =
@@ -483,6 +515,16 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       questionCode: questionCode,
       response: updatedResponse,
     });
+    if (errResponses[questionCode]) {
+      const newErrResponses = { ...errResponses };
+
+      delete newErrResponses[questionCode]; // Remove the error entry for this question
+
+      dispatch({
+        type: actionTypes.SET_ERR_RESPONSES,
+        payload: newErrResponses,
+      });
+    }
   };
   const handleCheckboxChange = (questionCode, isChecked) => {
     const { currentQuestion, responses, errResponses, formProgressStep } =
@@ -546,10 +588,12 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     let finalResponses = {};
     Object.entries(responses).forEach(([key, value]) => {
       value.users_answer = value.answer;
-      //  For 'num_employees', convert the range to a single number (e.g., '2-9' becomes '2')
-      if (key === "num_employees") {
-        let answerIndex = value.answerIndexes[0];
-        value.answer = answerIndex !== 0 ? value.answer.split(/[-+]/)[0] : "1";
+      if (key === "birth_date") {
+        const { day, month, year } = value.answer;
+        const monthIndex = new Date(`${month} 1`).getMonth() + 1;
+        const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex;
+        value.answer = `${day}/${formattedMonth}/${year}`;
+        value.users_answer = `${day}/${formattedMonth}/${year}`;
       }
     });
     const selectedBrand = chooseBrand(responses);
@@ -561,12 +605,12 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     }, {});
 
     // console.log(finalResponses);
-
+    const ridgeForm = 13;
     sendImpressions(
       finalResponses,
       env.FINAL_SUBMIT_EVENT_NAME,
       env.STREAM_FINAL_NAME,
-      selectedBrand
+      ridgeForm
     );
     dispatch({
       type: actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED,
@@ -577,6 +621,10 @@ export const QuestionnaireHandlers = (state, dispatch) => {
   const changeNextBtnState = (isEnabled) => {
     dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: isEnabled });
   };
+  const toggleDropdownPadding= (isNeeded,paddingValue) => {
+
+    dispatch({ type: actionTypes.UPDATE_DROPDOWN_PADDING, payload: {isNeeded,paddingValue} });
+  }
 
   return {
     animateAndNavigate,
@@ -591,5 +639,6 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     handleSelectionInputChange,
     completeQuestionnaire,
     changeNextBtnState,
+    toggleDropdownPadding
   };
 };
