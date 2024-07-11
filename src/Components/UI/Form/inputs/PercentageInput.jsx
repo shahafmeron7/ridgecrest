@@ -2,43 +2,51 @@ import React, { useState,useEffect } from 'react';
 import styles from './InputWithValidation.module.css'
 import {useQuestionnaire} from '@/context/QuestionnaireContext.jsx'
 import InputError from './InputError';
-const PercentageInput = ({subQuestion,isError}) => {
+const PercentageInput = ({subQuestion,value,isError,errorMessage}) => {
    const {handleInputChange} = useQuestionnaire()
-   const [value, setValue] = useState('');
+   const [inputValue, setInputValue] = useState(value);
    const [error, setError] = useState(isError);
    useEffect(() => {
       setError(isError);
     }, [isError]);
   const handleChange = (e) => {
-   const val = e.target.value;
+    const val = e.target.value.replace('%', '');
+
+  //  const val = e.target.value;
    if (val === '' || (/^\d+$/.test(val) && val >= 0 && val <= 100)) {
-     setValue(val);
+     setInputValue(val);
+
      handleInputChange(subQuestion.code, val,false);
    }
  };
 
  const handleKeyDown = (e) => {
-   if (e.key === 'ArrowUp') {
-     setValue((prevValue) => {
-       const newValue = prevValue === '' ? 1 : Math.min(100, Number(prevValue) + 1);
-       handleInputChange(subQuestion.code, newValue.toString(),false);
+  let numericValue = value.replace('%', '');
+  numericValue = numericValue === '' ? 0 : Number(numericValue);
 
-       return newValue.toString();
-     });
-   } else if (e.key === 'ArrowDown') {
-     setValue((prevValue) => {
-       const newValue = prevValue === '' ? 0 : Math.max(0, Number(prevValue) - 1);
-       handleInputChange(subQuestion.code, newValue.toString(),false);
-       return newValue.toString();
-     });
-   }
- };
+  if (e.key === 'ArrowUp') {
+    numericValue = Math.min(100, numericValue + 1);
+  } else if (e.key === 'ArrowDown') {
+    numericValue = Math.max(0, numericValue - 1);
+  } else {
+    return;
+  }
 
-  const handleBlur = () => {
-    if (value === '') {
-      setValue('');
-    }
-  };
+  const newValueWithPercentage = `${numericValue}%`;
+  setInputValue(newValueWithPercentage);
+  handleInputChange(subQuestion.code, newValueWithPercentage, false);
+  e.preventDefault(); // Prevent the default behavior of arrow keys
+};
+
+  
+ const handleBlur = () => {
+  if (value !== '' && !value.includes('%')) {
+    const newValue = `${value}%`;
+    setInputValue(newValue);
+    // console.log("handleBlur",newValue)
+    handleInputChange(subQuestion.code, newValue, false);
+  }
+};
 
   return (
    
@@ -48,13 +56,13 @@ const PercentageInput = ({subQuestion,isError}) => {
       <input
           className={`${styles.input} ${error ? `${styles.inputError}` : ""}`}
           type="text"
-        value={value}
+        value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         placeholder={subQuestion.example}
       />
-    <InputError error={error} message={subQuestion.error}/>
+    <InputError error={error} message={errorMessage}/>
     </div>
 
    

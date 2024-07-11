@@ -1,8 +1,7 @@
 import React from "react";
 import  styles  from './Navbar.module.css';
-import logo from "@/images/sonary_logo.svg?url";
-import mountaionLogo from "@/images/Mountainlogo.svg?url";
-import ridgeNameLogo from "@/images/ridgcrestnamelogo.svg?url";
+import mountaionLogo from "@/images/ridgelogo.svg?url";
+import ridgeNameLogo from "@/images/ridgecrestnamelogo.svg?url";
 
 
 const Navbar = () => {

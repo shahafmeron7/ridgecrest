@@ -8,10 +8,10 @@ import App from "./App/App.jsx";
  import { QuestionnaireProvider } from "./context/QuestionnaireProvider.jsx";
  import { OsanoVisibilityProvider } from "./context/OsanoVisibilityContext";
 
- if (import.meta.env.PROD) {
-  console.log('disabled devtool')
-  disableReactDevTools();
-}
+  if (import.meta.env.PROD) {
+   console.log('disabled devtool')
+   disableReactDevTools();
+ }
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

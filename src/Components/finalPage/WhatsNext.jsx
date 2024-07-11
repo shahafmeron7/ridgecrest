@@ -26,6 +26,9 @@ const WhatsNext = () => {
             return part;
           });
         };
+        const renderEmail = (info,email)=>{
+
+        }
       
         return (
           <div className={styles.card}>
@@ -34,9 +37,17 @@ const WhatsNext = () => {
           </div>
             <div className={styles.cardInfoWrapper}>
               <h3 className={styles.cardTitle}>{card.title}</h3>
+              {card.email? (
+                <p className={styles.cardInfo}>
+                We're here for you if you need anything throughout the lending process. Feel free to call us or send an email with any questions or concerns to <a className={styles.link} href={`mailto:${card.email[0]}`}>hello@ridgecrestfg.com</a> and we'll get back to you as soon as possible.
+
+                </p>
+              ):(
+
               <p className={styles.cardInfo}>
                 { card.bolds.length>1 ? renderInfoTextWithBolds(card.info, card.bolds) : card.info}
               </p>
+              )}
             </div>
           </div>
         );

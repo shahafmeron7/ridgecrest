@@ -1,4 +1,5 @@
-import questionnaireData from "@/utils/data/questionnaireData.js";
+import questionnaireData from "@/utils/data/questionnaire/index.js";
+
 import env from "@/utils/data/env";
 
 function chooseRandomlyIfTied(scores, excludePaycor, brandIds) {

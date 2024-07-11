@@ -14,11 +14,14 @@ const QuestionnaireLayout = React.forwardRef(({ children }, ref) => {
     // paddingBottom:" 80px", 
      paddingTop:"0px"
   }
- 
   return (
     <div ref={ref}  className={styles.questionnaireLayout} >
       <div className={styles.questionnaireWrapper} >
-      {children}</div>
+      <div className={styles.questionnaireContent}>
+
+      {children}
+      </div>
+      </div>
     </div>
   );
 });

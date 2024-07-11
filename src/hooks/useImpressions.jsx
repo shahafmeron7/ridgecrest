@@ -28,7 +28,7 @@ export const useQuestionImpressions = (state) => {
             env.STEP_EVENT_NAME,
             env.STREAM_STEP_NAME
         );
-    }, [currentQuestionCode,currentQuestion,flowID,flowName]);
+    }, [currentQuestionCode,currentQuestion,formProgressStep,flowID,flowName]);
 };
 
 export const useUnloadImpressions = (state) => {

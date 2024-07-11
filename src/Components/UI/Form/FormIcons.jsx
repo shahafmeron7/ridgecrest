@@ -1,8 +1,8 @@
 import React from 'react';
-import  ClockIcon  from "@/images/form icons/clock.svg";
+import  ClockIcon  from "@/images/form icons/clock2.svg";
 import  LockIcon  from "@/images/form icons/lock.svg";
 import  TrustedIcon  from "@/images/form icons/trustedcheckmark.svg";
-import creditscoreIcon from "@/images/form icons/creditscore.svg"
+import obligationIcon from "@/images/form icons/obligation.svg"
 import styles from './FormIcons.module.css';
 // import { useQuestionnaire } from '../../context/QuestionnaireContext';
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
@@ -15,13 +15,13 @@ const FormIcons = () => {
             alt: "lock icon"
         },
         {
-            text: "Trusted Brands",
-            Icon: TrustedIcon, 
+            text: "Takes Just Minutes",
+            Icon: ClockIcon, 
             alt: "trust checkmark icon"
         },
         {
-            text: "Your credit ",
-            Icon: creditscoreIcon,
+            text: "No Obligation",
+            Icon: obligationIcon,
             alt: "clock icon"
         }
     ];

@@ -1,23 +1,27 @@
-import React from "react";
+import React ,{useState,useEffect} from "react";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import OneSelectionQuestion from "./OneSelectionQuestion.jsx";
 import DetailsQuestion from "./DetailsQuestion.jsx";
 
 const AnswersContent = () => {
-  const { currentQuestion } = useQuestionnaire();
+  const { currentQuestion,initialResponsesSet } = useQuestionnaire();
+  
+
   const questionComponents = {
     "one-selection": OneSelectionQuestion,
     "details-question": DetailsQuestion,
     "form-type": DetailsQuestion,
   };
-
+   
   const QuestionComponent = questionComponents[currentQuestion.type];
 
   if (!QuestionComponent) {
     return <>Question type not supported</>;
   }
 
-  return <QuestionComponent/>;
+
+  return <QuestionComponent key={initialResponsesSet ? "updated" : "initial"} />;
+
 };
 
 export default AnswersContent;

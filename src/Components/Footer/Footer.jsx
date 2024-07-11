@@ -4,9 +4,11 @@ import facebookIcon from "@/images/footer/Facebook.svg?url";
 import InstagramIcon from "@/images/footer/Instagram.svg?url";
 import LinkedinIcon from "@/images/footer/Linkedin.svg?url";
 import xIcon from "@/images/footer/X.svg?url";
-import mountaionLogo from "@/images/Mountainlogo.svg?url";
-import ridgeNameLogo from "@/images/ridgcrestnamelogo.svg?url";
-const domainURL = '#'
+import mountaionLogo from "@/images/ridgelogo.svg?url";
+import ridgeNameLogo from "@/images/ridgecrestnamelogo.svg?url";
+import rightArrowIcon from "@/images/footer/rightArrow.svg?url";
+
+const domainURL = "ridgecrestfg.com";
 const handleCookiesSettingsClick = (e) => {
   if (typeof window.openSidebarListener === "function") {
     window.openSidebarListener(e);
@@ -18,36 +20,45 @@ const footerLinks = [
   {
     title: "Company",
     links: [
-      { text: "Terms of Use", href: `https://${domainURL}/terms-of-use/`},
-      { text: "Privacy Policy", href: `https://${domainURL}/privacy-policy/`},
-      { text: "How We Rate", href: `https://${domainURL}/how-we-rate/`},
-      {
-        text: "CCPA Privacy Notice",
-        href: `https://${domainURL}/ccpa-privacy-noticy`,
-  },
-      {
-        text: "Cookie Settings",
-        onClick: handleCookiesSettingsClick,
-        className: "cookie_settings",
-      },
+      { text: "About Us", href: `https://${domainURL}/about-us/` },
+      //     { text: "Terms of Use", href: `https://${domainURL}/terms-of-use/`},
+      //     { text: "Privacy Policy", href: `https://${domainURL}/privacy-policy/`},
+      //     { text: "How We Rate", href: `https://${domainURL}/how-we-rate/`},
+      //     {
+      //       text: "CCPA Privacy Notice",
+      //       href: `https://${domainURL}/ccpa-privacy-noticy`,
+      // },
+      //     {
+      //       text: "Cookie Settings",
+      //       onClick: handleCookiesSettingsClick,
+      //       className: "cookie_settings",
+      //     },
     ],
   },
   {
     title: "Quick Links",
     links: [
-      { text: "About Us", href: `https://${domainURL}/about/`},
-      { text: "Partners", href: `https://${domainURL}/b/`},
-      { text: "Contact Us", href: `https://${domainURL}/contact-us/`},
+      // { text: "Partners", href: `https://${domainURL}/b/`},
+      // { text: "Contact Us", href: `https://${domainURL}/contact-us/`},
+      { text: "Blog", href: `https://${domainURL}/blog/` },
     ],
   },
   {
     title: "Social Media",
     isSocial: true,
     links: [
-      { icon: facebookIcon, alt: "facebookIcon", href: "#" },
-      { icon: InstagramIcon, alt: "instagramIcon", href: "#" },
-      { icon: LinkedinIcon, alt: "LinkedinIcon", href: "#" },
-      { icon: xIcon, alt: "twitter", href: "#" },
+      {
+        icon: facebookIcon,
+        alt: "facebookIcon",
+        href: "https://www.facebook.com/people/Ridge-Crest-FG/61561639512371/",
+      },
+      // { icon: InstagramIcon, alt: "instagramIcon", href: "#" },
+      {
+        icon: LinkedinIcon,
+        alt: "LinkedinIcon",
+        href: "https://www.linkedin.com/company/ridge-crest-fg/about/",
+      },
+      // { icon: xIcon, alt: "twitter", href: "#" },
     ],
   },
 ];
@@ -64,18 +75,19 @@ const Footer = () => {
             <div className="links-wrapper">
               {footerLinks.map((section, index) => (
                 <div
-                  key={index}
+                  key={`${section.title}-${index}`}
                   className="links-container"
                 >
-                  <div
-                    className="links-title"
-                  >
-                    {section.title}
-                  </div>
+                  <div className="links-title">{section.title}</div>
                   {section.isSocial ? (
                     <div className="logos">
                       {section.links.map((link, linkIndex) => (
-                        <a key={linkIndex} href={link.href}>
+                        <a
+                         key={`${section.title}-${linkIndex}-${link.alt}`}
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener nofollow"
+                        >
                           <img
                             src={link.icon}
                             alt={link.alt}
@@ -91,25 +103,35 @@ const Footer = () => {
                     </div>
                   ) : (
                     section.links.map((link, linkIndex) => (
-                      <a
-                        key={linkIndex}
-                        className={`text ${link.className || ""}`}
-                        href={link.href}
-                        onClick={link.onClick || null}
-                      >
-                        {link.text}
-                      </a>
+                      <>
+                        <a
+                                                  key={`${section.title}-${linkIndex}-${link.text}`}
+
+                          className={`text ${link.className || ""}`}
+                          href={link.href}
+                          onClick={link.onClick || null}
+                       
+                        >
+                          {link.text}
+                          <img
+                            src={rightArrowIcon}
+                            width="16"
+                            height="16"
+                            alt="arrow"
+                            className="hoverArrow"
+                          />
+                        </a>
+                      </>
                     ))
                   )}
                 </div>
               ))}
             </div>
           </div>
-          {/* <div className="hearbackContainer">We want to hear from you</div> */}
         </div>
         <div className="disclaimerContainer">
           <div className="disclaimerText">
-            <p>
+            {/* <p>
               This website is owned and operated by ryze beyond ltd.
               Reproduction of this website, in whole or in part, is strictly
               prohibited. This website is an informative comparison site that
@@ -128,7 +150,7 @@ const Footer = () => {
               up-to-date, however, an offer’s terms might change at any time. We
               do not compare or include all service providers, brands and offers
               available in the market.
-            </p>
+            </p> */}
             <div className="right-reserved">All rights reserved © 2024</div>
           </div>
         </div>

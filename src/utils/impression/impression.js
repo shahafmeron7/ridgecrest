@@ -8,7 +8,7 @@ import {
   } from "./impressionFunctions.js";
   
   const inputs = {
-    siteName: "Sonary",
+    siteName: "RidgeCrest",
     pageId:10000,
     siteId:1000
   };
