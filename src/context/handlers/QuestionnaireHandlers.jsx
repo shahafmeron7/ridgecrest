@@ -52,7 +52,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     
   };
 
-  const moveToPrevQuestion = (isBrowserBack = false) => {
+  const moveToPrevQuestion = () => {
     const { questionHistory, formProgressStep, currentQuestion } = state;
 
     if (formProgressStep > 1) {
@@ -87,9 +87,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       }, newProgressBarWidth);
 
       dispatch({ type: actionTypes.SET_QUESTION_HISTORY, payload: newHistory });
-      // if (!isBrowserBack) {
-      //   window.history.pushState({ questionCode: prevQuestionCode }, null, " ");
-      // }
+      
     }
   };
 
