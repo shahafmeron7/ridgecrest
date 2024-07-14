@@ -29,7 +29,9 @@
 .infoContainer{
   display: flex;
   gap:32px;
-  flex-direction: column;
+  width: 100%;
+  justify-content: space-between;
+  /* flex-direction: column; */
 }
 .hearbackContainer{
   width: 100%;
@@ -114,7 +116,11 @@
   font-size: 16px;
   font-weight: 600;
 }
-
+.divider{
+  height: 100%;
+  width: 1px;
+  background-color: #C2C8D4;
+}
 
 .menu-links-title {
   font-size: 22px;
@@ -147,10 +153,29 @@ line-height: 20px;
   }
   .links-wrapper{
     flex-wrap: wrap;
+    gap: 32px;
+  }
+  .infoContainer{
+    flex-direction: column;
+    justify-content: unset;
+  }
+  /* .logoContainer{
+
+  } */
+  .divider{
+    display: none;
+  }
+  .r-logo{
+    width: 51px;
+    height: 39px;
+  }
+  .r-name-logo{
+    width: 169px;
+    height: 39px;
   }
   .footer{
     /* padding: 24px 0px; */
-    gap: 40px;
+    gap: 32px;
   }
 
 }

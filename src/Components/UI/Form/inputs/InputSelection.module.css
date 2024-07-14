@@ -5,14 +5,14 @@
 }
 
 .selectionListItem {
-  font-size: 14px;
+  font-size: 16px;
   flex: 1;
   align-content: center;
   text-align: center;
   line-height: 22px;
   cursor: pointer;
   color: #313131;
-  padding: 16px 16px;
+  padding: 8px 16px;
   height: 56px;
   background-color: #fff;
   list-style-type: none;

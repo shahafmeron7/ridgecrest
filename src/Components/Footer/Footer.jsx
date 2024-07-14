@@ -69,9 +69,10 @@ const Footer = () => {
         <div className="footerTopContainer">
           <div className="infoContainer">
             <div className="logoContainer">
-              <img src={mountaionLogo} alt="Logo" width="60" height="40" />
-              <img src={ridgeNameLogo} alt="Logo" width="162" height="38" />
+              <img src={mountaionLogo} className="r-logo" alt="Logo" width="89" height="69" />
+              <img src={ridgeNameLogo} className="r-name-logo" alt="Logo" width="293" height="69" />
             </div>
+            <div className="divider"></div>
             <div className="links-wrapper">
               {footerLinks.map((section, index) => (
                 <div
