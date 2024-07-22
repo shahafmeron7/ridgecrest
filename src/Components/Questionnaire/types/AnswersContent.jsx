@@ -2,7 +2,7 @@ import React ,{useState,useEffect} from "react";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import OneSelectionQuestion from "./OneSelectionQuestion.jsx";
 import DetailsQuestion from "./DetailsQuestion.jsx";
-
+import DocumentQuestion from './DocumentQuestion.jsx'
 const AnswersContent = () => {
   const { currentQuestion,initialResponsesSet } = useQuestionnaire();
   

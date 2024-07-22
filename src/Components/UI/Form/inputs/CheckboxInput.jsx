@@ -4,9 +4,9 @@ import styles from "./CheckboxInput.module.css";
 import selectedSvg from "@/images/selectedcheckbox.svg?url";
 import unselectedSvg from "@/images/unselectedcheckbox.svg?url";
 import InputError from "./InputError";
-const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError }) => {
+const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError,marginTop=null }) => {
   const [isSelected, setIsSelected] = useState(isChecked);
-  const { handleSelectionInputChange } = useQuestionnaire();
+  const { handleSelectionInputChange,currentQuestion } = useQuestionnaire();
   const [error, setError] = useState(isError);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError }) => {
     setIsSelected((prevState) => !prevState);
     handleSelectionInputChange(
       subQuestion.code,
-      !isSelected ? 1 : 0,
+      !isSelected ? 0 : 1,
       subQuestion.element
     );
   };
@@ -31,15 +31,22 @@ const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError }) => {
         className={styles.checkbox}
         onClick={handleSelect}
       />
-      <p>
+      {currentQuestion.type ==="document" ? (
+        <p>
+          {subQuestion.text}
+        </p>
+      ):(
+        <p>
         By checking this box, you electronically consent to the Ridge Crest
         Financial Group, LLC{" "}
-        <a className={styles.link}>Terms and Conditions</a> and{" "}
+        <a href="https://ridgecrestfg.com/terms-of-use/" className={styles.link}>Terms and Conditions</a> and{" "}
         <a href="https://ridgecrestfg.com/privacy-policy/" className={styles.link}>Privacy policy</a>
       </p>
+      )}
+     
     </div>
     
-      <InputError error={error} message={errorMessage} />
+      <InputError error={error} message={errorMessage} marginTop={marginTop}/>
     </div>
   );
 };

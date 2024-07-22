@@ -1,3 +1,18 @@
+const getLastThreeMonths = () => {
+  const monthNames = generateMonths()
+
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+
+  const months = [];
+  for (let i = 2; i >= 0; i--) {
+    const date = new Date(currentYear, currentMonth - i);
+    months.push(`${monthNames[date.getMonth()]} ${date.getFullYear()}`);
+  }
+
+  return months;
+};
 const generateDays = (month, year) => {
   const daysInMonth = new Date(year, month, 0).getDate();
   // console.log('im here generate days daysInMonth',daysInMonth)
@@ -24,4 +39,4 @@ const generateDays = (month, year) => {
    return years.reverse();
  };
 
- export {generateDays,generateMonths,generateMonthsMobile,generateYears}
+ export {generateDays,generateMonths,generateMonthsMobile,generateYears,getLastThreeMonths}

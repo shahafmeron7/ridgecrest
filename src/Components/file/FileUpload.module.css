@@ -1,0 +1,83 @@
+.container {
+   position: relative;
+   flex: 1;
+   height: 155px;
+   border: 1px dashed #C2C8D4;
+   padding: 30px;
+   border-radius: 16px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   background-color: white;
+   transition: all .2s ease;
+   
+   
+}
+.container:hover{
+   
+   border: 1px dashed var(--Border-Border-2, #37008F);
+background: var(--surfaces-surface-12, rgba(55, 0, 143, 0.02));
+box-shadow: 0px 0px 6px 0px rgba(55, 0, 143, 0.30) inset;
+   cursor: copy;
+}
+
+.fileUpload {
+   
+   align-items: center;
+   justify-content: center;
+   /* align-content: center; */
+}
+.instructions{
+    
+   display: flex;
+   flex-direction: column;
+   gap: 16px;
+   align-items: center;
+   text-align: center;
+ }
+ .dragging {
+   /* Add any specific styles for dragging state if needed */
+ }
+ 
+
+ 
+ .fileUpload.notAllowed {
+   cursor: not-allowed;
+   pointer-events: none;
+   
+ }
+ 
+ .fileUpload.allowed {
+   pointer-events: auto;
+}
+
+.fileDetails {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+ }
+ 
+ .placeholder {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 8px;
+ }
+ 
+ .uploadLink {
+   color: #004AD9;
+   text-decoration: underline;
+ }
+ 
+ .removeButton {
+   position: absolute;
+   top: 5px;
+   right: 5px;
+   cursor: pointer;
+   background-color: transparent;
+   border: none;
+   color: red;
+   font-size: 16px;
+ }
+ 

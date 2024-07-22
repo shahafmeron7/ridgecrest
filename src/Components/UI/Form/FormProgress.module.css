@@ -79,14 +79,22 @@
     background-position: 200px 0;
   }
 }
+@media only screen and (max-width:400px) {
+  .formProgressItem {
+    text-align: left;
+
+  }
+}
+
 @media only screen and (max-width: 767px) {
   .formProgressContainer {
     width: 100%;
   }
   .formProgressItem {
-    /* text-align: left; */
     line-height: 15px;
     gap: 4px;
+    padding: 0px 8px;
+    font-size: 12px !important;
   }
   .formProgressItem:first-child{
     padding-left: 0px;
@@ -98,3 +106,4 @@
 height: 100%;
   }
 }
+

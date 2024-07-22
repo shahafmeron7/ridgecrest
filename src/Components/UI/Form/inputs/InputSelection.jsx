@@ -64,6 +64,7 @@ const InputSelection = ({ subQuestion,selectedAnswerIndex,isError,errorMessage }
             borderRight: "1px solid var(--grey-border-color)",
             borderBottom: index === length - 1 ? "1px solid var(--grey-border-color)" : "1px solid var(--grey-border-color)",
             borderTop: index === 0 ? "1px solid var(--grey-border-color)" : "none",
+            flex:"unset"
           };
         }
       } else {

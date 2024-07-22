@@ -1,0 +1,30 @@
+.nextBtn {
+  display: flex;
+  /* width: 280px; */
+  width: 100%;
+  height: 56px;
+  padding: 8px 24px;
+  /* color:#fff; */
+  color: #9398A1;
+  
+  font-weight: 600;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  font-size: 18px;
+  line-height: 22px;
+  border: none;
+  transition: all .3 ease;
+  background-color: var(--btn-disabled-color);
+  /* transition: background-color 0.3ms ease-in; */
+}
+
+.enabled{
+  color: #fff;
+  cursor: pointer;
+  background-color: #00B977;
+  transition: all 0.3s ease-in-out;
+}
+  .formResultBtn{
+    width: 100%;
+  }

@@ -2,11 +2,12 @@
 
 export const buildEventData = (formProgressStep,currentQuestion, flowID,flowName, action = null) => {
     const { step, code, text, type,formSteps } = currentQuestion;
+    // if(!formSteps.subquestions) return;
     const subquestions =formSteps[formProgressStep-1].subquestions;
 
 
     let questionsData;
-    if (type === "details-question" || type === "form-type") {
+    if (type === "details-question" || type === "form-type" || type==="document") {
       questionsData = subquestions.map((sub) => ({
         code: sub.code,
         text: sub.text,

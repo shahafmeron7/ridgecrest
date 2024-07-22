@@ -16,7 +16,7 @@ const validationCodes = {
   security_number: "ssn",
 };
 
-const questionnaireData = {
+const questionnaireDataLong = {
   flow_id: 1,
   flow_name: "ridgecrest",
   supported_brands: [
@@ -65,7 +65,7 @@ const questionnaireData = {
               type: "text",
               code: "phone",
               error: "Please enter a valid phone number",
-              example: "(234) 567-999 ",
+              example: "(234) 567-9999",
               maxLength: "14",
               element: "input",
               validationCode: validationCodes["phone"],
@@ -90,7 +90,8 @@ const questionnaireData = {
 
       answers: [
         {
-          next_question_code: "business_information",
+            next_question_code: "business_information",
+
         },
       ],
     },
@@ -287,7 +288,7 @@ const questionnaireData = {
               validationCode: validationCodes["business_address"],
             },
             {
-              text: "Business zip code",
+              text: "Business ZIP Code",
               type: "text",
               code: "business_zip",
               example: "E.g: 75001",
@@ -314,7 +315,7 @@ const questionnaireData = {
               element: "dropdown",
             },
             {
-              text: "Business Website",
+              text: "Business website",
               type: "text",
 
               code: "business_website",
@@ -358,16 +359,16 @@ const questionnaireData = {
                 code: "home_address",
                 type: "text",
                 error: "Please enter a valid address",
-                example: "e.g: 95 Street of white roses",
+                example: "E.g: 10356 E Hollywood Avenue",
                 element: "input",
                 validationCode: validationCodes["home_address"],
               },
               {
-                text: "Zip code",
+                text: "ZIP Code",
                 type: "text",
                 code: "zip_code",
-                error: "Please enter a valid 5-digit ZIP code.",
-                example: "e.g: 90210",
+                error: "Please enter a valid 5-digit ZIP Code.",
+                example: "E.g: 90210",
                 maxLength: "5",
                 element: "input",
                 validationCode: validationCodes["zip_code"],
@@ -376,7 +377,7 @@ const questionnaireData = {
                 text: "Cell number",
                 code: "cell_phone",
                 error: "Please enter a valid phone number",
-                example: "E.g: (234) 567-999 ",
+                example: "E.g: (234) 567-9999",
                 maxLength: 14,
                 element: "input",
                 validationCode: validationCodes["cell_phone"],
@@ -420,6 +421,33 @@ const questionnaireData = {
         ],
         answers: [
           {
+            next_question_code: "financial_information",
+          },
+        ],
+      },
+      {
+        code: "financial_information",
+        text: "Financial Information",
+        step: 4,
+        display_list_direction: "col",
+        type: "document",
+        formSteps: [
+          {
+            step: 1,
+            subquestions: [
+              {
+                text: "By uploading your account statement through the RCFG platform, you are authorizing RCFG, LLC to access, and if needed, transmit your account information to one of our funding partners.",
+                code: "financial_consent",
+                element: "checkbox",
+                error: "This field is required",
+        
+              },
+            ]
+          }
+        
+        ],
+        answers: [
+          {
             next_question_code: "thank_you",
           },
         ],
@@ -445,352 +473,5 @@ const questionnaireData = {
     },
   ],
 };
-const questionnaireDataShort = {
-  flow_id: 1,
-  flow_name: "ridgecrest",
-  supported_brands: [
-    {
-      form_id: env.PAYCOR_FORM_ID,
-      weight: 0.7,
-    },
-    {
-      form_id: env.PAYCHEX_FORM_ID,
-      weight: 0.3,
-    },
-  ],
-  questions: [
-    {
-      code: "basic_information",
-      text: "Basic Information",
-      step: 1,
-      display_list_direction: "col",
-      type: "form-type",
-      formSteps: [
-        {
-          step: 1,
-          subquestions: [
-            
-            {
-              text: "Full name",
-              type: "text",
-              code: "full_name",
-              error:
-                "Your full name must be at least 2 characters long and contain no numbers",
-              example: "Full name",
-              element: "input",
-              validationCode: validationCodes["full_name"],
-            },
-            {
-              text: "Email",
-              type: "text",
-              code: "email",
-              error: "Please enter a valid email address",
-              example: "Email address",
-              element: "input",
-              validationCode: validationCodes["email"],
-            },
-            {
-              text: "Phone number",
-              type: "text",
-              code: "phone",
-              error: "Please enter a valid phone number",
-              example: "(234) 567-999 ",
-              maxLength: "14",
-              element: "input",
-              validationCode: validationCodes["phone"],
-            },
-            {
-              text: "How much is your annual revenue?",
-              code: "annual_revenue",
-              answers: ["Under $200k", "$200k-$500k", "Over $500k"],
-              error: "This field is required",
-              element: "selection",
-            },
 
-            {
-              text: "By checking this box, you electronically consent to the Ridge Crest Financial Group, LLC Terms and Conditions and Privacy policy",
-              code: "privacy_consent",
-              element: "checkbox",
-              error: "This field is required",
-            },
-          ],
-        },
-      ],
-
-      answers: [
-        {
-          next_question_code: "business_information",
-        },
-      ],
-    },
-    {
-      code: "business_information",
-      text: "Business Information",
-      step: 2,
-      type: "form-type",
-      display_list_direction: "col",
-      formSteps: [
-        {
-          step: 1,
-          subquestions: [
-            {
-              text: "How much funding do you need?",
-              code: "funding_amount",
-              example: "Choose an option",
-              answers: [
-                "$5K-$25K",
-                "$25K-$75K",
-                "$75K-$150K",
-                "$150K-$500K",
-                "Over $500K",
-              ],
-              error: "This field is required",
-
-              element: "dropdown",
-            },
-            {
-              text: "How long have you been in business?",
-              code: "business_time",
-              example: "Choose an option",
-              error: "This field is required",
-              answers: ["Under 6 Months", "6 Months to 1 Year", "Over 1 Year"],
-              element: "selection",
-            },
-            {
-              text: "What is your business industry?",
-              code: "business_industry",
-              example: "Choose an option",
-              answers: [
-                "Agriculture - Forestry, Fishing & Hunting",
-
-                "Art Dealers",
-                "Arts, Entertainment, & Recreation",
-                "Automotive - Parts (Wholesale)",
-                "Automotive Dealer - New",
-                "Automotive Dealer - Used",
-                "Automotive Repair - Parts & Services",
-                "Automotive Sales - Cars & Trucks",
-                "Automotive Sales - RV & Motorsports (Motorcycles/ATV/Boat)",
-                "Bail Bond Services",
-                "Beauty, Salon & Personal Care Services",
-                "Birth Tourism",
-                "Cannabis (CBD)",
-
-                "Civic Organization",
-                "Construction -  Building & Trades",
-                "Consulting",
-                "Contractors (Plumbing, HVAC, Other)",
-                "Convenience Store, Market, Deli, Bakery",
-
-                "Ecommerce",
-                "Education, School, Daycare",
-                "Electricians, Plumbing, HVAC",
-                "Equipment Sales & Rental",
-                "Farming & Agriculture",
-                "Finance",
-                "Firearm (& Accessories) Sales",
-                "Food & Beverage - Other",
-                "Food & Beverage - Restaurant & Bar",
-                "Food & Beverage - Wholesale",
-                "Freight Trucking",
-                "Furniture, Home Furnishing",
-
-                "Gas Station, Fuel Service",
-                "Gold dealers",
-                "Government - Contracts",
-                "Government - Organizations",
-                "Gym, Fitness",
-                "Healthcare - Fitness & Wellness Services",
-                "Healthcare - Medical & Dental",
-                "Healthcare - Other",
-                "Home-Based Business",
-                "Home-Healthcare, Senior Care",
-                "Hospitality & Entertainment",
-                "Hospitality - Hotel & Motel",
-                "Hospitality - Room & Board",
-                "Insurance",
-                "Insurance Broker",
-                "Janitorial, Cleaning Services",
-                "Jewelry",
-                "Landscaping, Lawn Services",
-                "Laundry, Dry Cleaning Services",
-                "Law Firm",
-                "Lending",
-                "Loan Brokers",
-                "Manufacturing - General",
-                "Manufacturing - (Mobile) Home Dealers",
-                "Manufacturing - Material & Food Production",
-                "Media, Communications, & Marketing",
-                "Medical Professional",
-                "Mining - Energy Services Extraction Including Oil, Gas, Etc.",
-                "Mining - Other",
-                "Money Services Businesses (MSBs)",
-                "Mortgage Loan Brokers",
-                "Multi-Level Marketing",
-                "Not For Profit",
-                "Other",
-                "Pawn Shops",
-                "Pharmacy",
-                "Politics",
-                "Public Administrations & Organizations",
-                "Real Estate Services",
-                "Recycling",
-                "Religious Organizations",
-                "Retail Store - Clothing",
-                "Retail Store - Food & Beverage",
-                "Retail Store - Home Improvement",
-                "Retail Store - Mobile Devices",
-                "Retail Store - Outdoor Sports",
-                "Retail Store - Other",
-                "Salon & Spa",
-                "Security Guard Services",
-                "Services - Business",
-                "Services - Education",
-                "Services - Financial",
-                "Services - Legal",
-                "Services - Other",
-                "Services - Professional",
-                "Social Assistance",
-                "Solar & Renewable Energy",
-                "Staffing Agency",
-                "Technology - IT Services",
-                "Technology - Media & Publishing",
-                "Technology - Sales & Services",
-                "Travel Agencies",
-                "Trucking & Transportation",
-                "Utilities",
-                "Warehousing",
-                "Wholesale Distribution",
-                "Wholesale Trade",
-                "Wine & Liquor Store",
-                "Wireless Store - Branded",
-              ],
-              error: "This field is required",
-
-              element: "dropdown",
-            },
-            {
-              text: "How do you plan to use the funds?",
-              code: "loan_info",
-              example: "Write here",
-              maxLength: 250,
-              error: "Please enter more than 2 characters",
-              element: "free_text",
-              validationCode: "loan_info",
-            },
-            {
-              text: "How soon do you need funding?",
-              code: "funding_time",
-              example: "Choose an option",
-              answers: [
-                "ASAP",
-                "Within 72 hours",
-                "In the next 14 days",
-                "In the next month",
-              ],
-              error: "This field is required",
-
-              element: "dropdown",
-            },
-          ],
-        },
-        {
-          step: 2,
-          subquestions: [
-            {
-              text: "What is your company name?",
-              type: "text",
-              code: "company_name",
-              example: "E.g: Company Name",
-              error: "Please enter more than 2 characters",
-              element: "input",
-              validationCode: validationCodes["company_name"],
-            },
-            {
-              text: "Business address",
-              type: "text",
-              code: "business_address",
-              example: "E.g: 23 Street NY",
-              error: "Please enter a valid address",
-              element: "input",
-              validationCode: validationCodes["business_address"],
-            },
-            {
-              text: "Business zip code",
-              type: "text",
-              code: "business_zip",
-              example: "E.g: 75001",
-              error: "Please enter a valid 5-digit ZIP code.",
-              maxLength: 5,
-              element: "input",
-              validationCode: validationCodes["business_zip"],
-            },
-            {
-              text: "What type of business do you own?",
-              code: "business_type",
-              example: "Choose an option",
-              answers: [
-                "Sole Proprietership",
-                "LLC",
-                "Corporation",
-                "General Partnership",
-                "Limited Partnership",
-                "LLP",
-                "Non Profit",
-              ],
-              error: "This field is required",
-
-              element: "dropdown",
-            },
-            {
-              text: "Business Website",
-              type: "text",
-
-              code: "business_website",
-              example: "E.g: www.google.com",
-              error: "Please enter a valid website url",
-              element: "input",
-              validationCode: validationCodes["business_website"],
-            },
-            {
-              text: "What is your business tax ID?",
-              type: "text",
-              mode: "numeric",
-              code: "business_tax_id",
-              example: "E.g: 12-3456789",
-              error: "Please enter a valid ID",
-              element: "input",
-              validationCode: validationCodes["business_tax_id"],
-            },
-          ],
-        },
-      ],
-      subquestions: [],
-      answers: [
-        {
-          next_question_code: "thank_you",
-        },
-      ],
-    },
-    {
-      text: "Thank you",
-      code: "thank_you",
-      formSteps: [
-        {
-          step: 99999,
-          subquestions: [
-            {
-              text: "Thank you",
-              code: "thank_you",
-            },
-          ],
-        },
-      ],
-      step: 99999,
-      type: "thank you",
-      display_list_direction: "col",
-      answers: [],
-    },
-  ],
-};
-export  {questionnaireData,questionnaireDataShort};
+export  {questionnaireDataLong};

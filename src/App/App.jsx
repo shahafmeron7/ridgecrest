@@ -20,8 +20,7 @@ import "./App.css";
 
 
 function App() {
-  const { questionnaireCompleted,} = useQuestionnaire();
-  
+  const { questionnaireCompleted} = useQuestionnaire();
   if (questionnaireCompleted) {
     return (
       <div className="AppWrapper">
@@ -30,7 +29,7 @@ function App() {
       </div>
     );
   }
-
+  
   return (
     <div className="AppWrapper">
       <Navbar />

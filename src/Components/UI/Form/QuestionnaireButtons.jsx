@@ -5,6 +5,7 @@ import useIsWideScreen from "@/hooks/useIsWideScreen";
 
 import { buildEventData,sendImpressions } from "@/utils/impression/impressionUtils";
 import env from '@/utils/data/env';
+import NextButton from "./NextButton";
 
 import OsanoVisibilityContext from "@/context/OsanoVisibilityContext";
 
@@ -18,15 +19,10 @@ const QuestionnaireButtons = () => {
   const { osanoShown } = useContext(OsanoVisibilityContext);
 
   const {
-    questionHistory,
     questionnaireStarted,
     currentQuestionCode,
-    checkAndEnableNextButton,
-    moveToNextQuestion,
-    inputModified,
-    nextBtnEnabled,
+
     moveToPrevQuestion,
-    responses,
     isAnimatingOut,
     currentQuestion,
     flowID,
@@ -34,50 +30,9 @@ const QuestionnaireButtons = () => {
     formProgressStep
   } = useQuestionnaire();
 
-  const appVersion = import.meta.env.VITE_APP_VERSION;
-  const finalQuestionCode = appVersion === 'long' ?   'personal_information' : 'business_information';
-  //to indicate if its the last substep as well.
-  const isFinalStep = formProgressStep == currentQuestion.formSteps?.length;
-  
-  
 
-  const buttonText = !questionnaireStarted
-    ? "Let's start"
-    : currentQuestionCode === finalQuestionCode && isFinalStep
-    ? 'Submit'
-    : 'Next';
 
-  const handleNextButtonClick = useCallback(() => {
-    if (!isAnimatingOut) {
-      moveToNextQuestion();
-    }
-  }, [isAnimatingOut, moveToNextQuestion]);
 
-    useEffect(() => {
-      checkAndEnableNextButton();
-    }, [checkAndEnableNextButton,currentQuestion, responses]);
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (
-        event.key === "Enter" &&
-               (inputModified || nextBtnEnabled)
-      ) {
-        handleNextButtonClick();
-        event.preventDefault();
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [
-    handleNextButtonClick,
-    inputModified,
-    nextBtnEnabled,
-  ]);
   const handlePrevClick =()=>{
     sendImpressions(buildEventData(formProgressStep,currentQuestion,flowID,flowName,USER_ACTION_CLICK_PREV), USER_EVENT_NAME, STREAM_STEP_NAME);
     moveToPrevQuestion();
@@ -106,12 +61,11 @@ const QuestionnaireButtons = () => {
 </svg>
         </button>
       )}
-      
+      <NextButton/>
+{/*       
       <button
         className={`${styles.nextBtn} ${questionnaireStarted ? styles.nextBtnWithPrev : styles.nextBtnFullWidth} ${inputModified || nextBtnEnabled ? styles.enabled : ""}`}
-        // className={`${styles.nextBtn} ${
-        //   inputModified || nextBtnEnabled ? styles.enabled : ""
-        // }`}
+   
         onClick={() =>
            handleNextButtonClick()
         }
@@ -120,8 +74,7 @@ const QuestionnaireButtons = () => {
         }
       >
       {buttonText}
-        {/* {!questionnaireStarted ? "Let's start" : isFinalStep ? "Submit" : "Next"} */}
-      </button>
+      </button> */}
     </div>
   );
 };

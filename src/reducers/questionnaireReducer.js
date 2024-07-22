@@ -7,7 +7,7 @@ export const initialState = () => {
     (q) => q.code === initialQuestionCode
   );
   const formQuestions = questionnaireData.questions.filter(
-    (q) => q.type === "form-type"
+    (q) => q.type === "form-type" || q.type === "document"
   );
   const flowID = questionnaireData.flow_id;
   const flowName = questionnaireData.flow_name;
@@ -26,6 +26,8 @@ export const initialState = () => {
     inputModified: false,
     nextBtnEnabled: false,
     progressBarWidth: 0,
+    sendFirstSubmit:true,
+    fullFormSubmitted:false,
     dropdownPaddingNeeded: false,
     paddingValue:0,
     responsesUpdated: false, //first rendering responses updated with params.
@@ -108,7 +110,10 @@ export function reducer(state, action) {
 
     case actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED:
       return { ...state, questionnaireCompleted: action.payload };
-
+      case actionTypes.TOGGLE_SEND_FIRST_SUBMIT:
+        return {...state,sendFirstSubmit:action.payload};
+        case actionTypes.TOGGLE_SEND_FINAL_SUBMIT:
+          return {...state,fullFormSubmitted:action.payload};
     case actionTypes.SET_TARGET_FORM_ID:
       return { ...state, targetFormID: action.payload };
 

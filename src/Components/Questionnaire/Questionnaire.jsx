@@ -17,15 +17,17 @@ import QuestionnaireTitle from "@/components/UI/QuestionnaireTitle";
 import styles from "./Questionnaire.module.css";
 import useIsWideScreen from "@/hooks/useIsWideScreen";
 import OsanoVisibilityContext from "@/context/OsanoVisibilityContext";
-
+import DocumentQuestion from "./types/DocumentQuestion";
+import DocumentLayout from "@/layouts/DocumentLayout";
 const Questionnaire = () => {
-  const { questionnaireStarted,dropdownPaddingNeeded,paddingValue } = useQuestionnaire();
+  const { questionnaireStarted,dropdownPaddingNeeded,paddingValue,currentQuestionCode } = useQuestionnaire();
   const { osanoShown } = useContext(OsanoVisibilityContext);
   const isWideScreen = useIsWideScreen();
   const showLoader = useLoader();
   const layoutRef = useAnimations();
   const paddingBottomDropdown = dropdownPaddingNeeded ? paddingValue : 0;
   const baseMobilePadding = osanoShown ? 170 : 88;
+  const documentStep = currentQuestionCode==="financial_information"
   
   const mobileStyle = {
     paddingBottom: `${baseMobilePadding + paddingBottomDropdown}px`,
@@ -43,7 +45,18 @@ const Questionnaire = () => {
       </QuestionnaireLayout>
     );
   }
+  if(documentStep){
+    return (
+      // <QuestionnaireLayout ref={layoutRef}>
+      <DocumentLayout ref={layoutRef}>
 
+    <QuestionnaireTitle />
+    <FormProgress />
+    <DocumentQuestion/>
+      </DocumentLayout>
+    // </QuestionnaireLayout>
+    )
+  }
   return (
     <QuestionnaireLayout ref={layoutRef}>
       <QuestionnaireTitle />

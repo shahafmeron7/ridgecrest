@@ -1,0 +1,51 @@
+.filesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.filesWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.acceptedFormatHeader {
+  display: flex;
+  justify-content: space-between;
+  color: #afb5bf;
+  font-size: 14px;
+  line-height: 18px;
+}
+.acceptedFormatHeader p{
+   display: inline-flex;
+   /* align-items: center; */
+   gap: 4px;
+}
+.filesList{
+   display: flex;
+  gap: 12px; 
+}
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
+
+  border-radius: 50%;
+  border-left-color: #fff;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .filesList{
+  flex-direction: column;
+  }
+}

@@ -21,7 +21,9 @@ export const QuestionnaireProvider = ({ children }) => {
    const handlers = QuestionnaireHandlers(state, dispatch);
 
 
-  useQuestionnaireState(state,dispatch,handlers.completeQuestionnaire);
+  useQuestionnaireState(state,dispatch,   
+     handlers.completeMidForm,
+    handlers.completeQuestionnaire);
   useFirstImpression();
   useQuestionImpressions(state);
   useUnloadImpressions(state);

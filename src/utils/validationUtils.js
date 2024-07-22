@@ -1,14 +1,27 @@
 import validator from "validator";
+import {parsePhoneNumberFromString} from 'libphonenumber-js'
+
 function isValidZipCode(zipCode) {
   // const regex = /^\d{5}(?:-\d{4})?$|^(\d{3} \d{3})$/;
   const regex = /(^\d{5}$)|(^\d{5}-\d{4}$)/;
   return regex.test(zipCode) && !zipCode.includes("0000");
 }
-function isValidPhone(phone) {
-  return /^(?:\+?1[-.\s]?)?\(?([2-9]\d{2})\)?[-.\s]?([2-9]\d{2})[-.\s]?(?!\1{3})\d{4}$/.test(
-    phone
-  );
+function isValidPhone(phone){
+    const phoneNumberObject = parsePhoneNumberFromString(phone, 'US');
+    if (!phoneNumberObject) {
+      return false;
+    }
+    // console.log(phoneNumberObject)
+    // console.log(phoneNumberObject.isValid())
+
+    return phoneNumberObject.isValid() && phoneNumberObject.country === 'US';
+  
 }
+// function isValidPhone(phone) {
+//   return /^(?:\+?1[-.\s]?)?\(?([2-9]\d{2})\)?[-.\s]?([2-9]\d{2})[-.\s]?(?!\1{3})\d{4}$/.test(
+//     phone
+//   );
+// }
 function isValidAddress(address) {
   const regex = /^[#.0-9a-zA-Z\s,-]+$/;
   return regex.test(address);

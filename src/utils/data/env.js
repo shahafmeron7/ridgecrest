@@ -4,6 +4,7 @@ const env = {
    STREAM_FINAL_NAME: import.meta.env.VITE_STREAM_FINAL_NAME,
    FIRST_EVENT_NAME: import.meta.env.VITE_FIRST_EVENT_NAME,
    STEP_EVENT_NAME: import.meta.env.VITE_STEP_EVENT_NAME,
+   FIRST_SUBMIT_EVENT_NAME: import.meta.env.VITE_FIRST_SUBMIT_EVENT_NAME,
    FINAL_SUBMIT_EVENT_NAME: import.meta.env.VITE_FINAL_SUBMIT_EVENT_NAME,
    EXIT_EVENT_NAME: import.meta.env.VITE_EXIT_EVENT_NAME,
    USER_EVENT_NAME: import.meta.env.VITE_USER_EVENT_NAME,
@@ -17,6 +18,7 @@ const env = {
    ADP_FORM_ID: import.meta.env.VITE_ADP_FORM_ID,
    PAYCHEX_FORM_ID: import.meta.env.VITE_PAYCHEX_FORM_ID,
    PAYCOR_FORM_ID: import.meta.env.VITE_PAYCOR_FORM_ID,
+   RIDGE_FORM_ID: import.meta.env.VITE_RIDGE_FORM_ID
 };
 
 export default env;

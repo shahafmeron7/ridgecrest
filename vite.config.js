@@ -39,6 +39,7 @@ const base = env.VITE_BASE_URL || "/";
     },
     server: {
       open: true,
+      port:6006
     },
     plugins: [
       react(),

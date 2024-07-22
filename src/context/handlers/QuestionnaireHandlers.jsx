@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import { validateField } from "@/utils/validationUtils";
 import { gsap } from "gsap";
 import questionnaireData from "@/utils/data/questionnaire/index";
+import { submitFiles } from "@/utils/data/files/index.js";
 import {
   buildEventData,
   sendImpressions,
@@ -90,7 +91,107 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       
     }
   };
+  const proceedToNextStep = () => {
+    const { currentQuestion, formProgressStep } =state;
+    const currentFormStep = formProgressStep;
+    const totalFormSteps = currentQuestion.formSteps.length;
+  
+    if (currentFormStep < totalFormSteps) {
+      // Move to next form step within the current question
+      handleFormStepNavigation(currentFormStep + 1);
+    } else {
+      // Move to the next question and reset formProgressStep
+      const nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+      if (nextQuestionCode) {
+        handleNextQuestionNavigation(nextQuestionCode);
+      }
+    }
+  };
+  const handleFormStepNavigation = (nextStep) => {
+    animateAndNavigate(
+      () => {
+        dispatch({
+          type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+          payload: nextStep,
+        });
+      },
+      100, // need to replace this with progress with (old leadgens). for now it does not matter.
+      TIME_DELAY_NEXT_QUESTION
+    );
+  };
+  const handleNextQuestionNavigation = (nextQuestionCode) => {
+    animateAndNavigate(
+      () => {
+        dispatch({
+          type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+          payload: 1,
+        });
+        handleNavigateNextQuestion(nextQuestionCode);
+      },
+      100, // need to replace this with progress with (old leadgens). for now it does not matter.
+      TIME_DELAY_NEXT_QUESTION
+    );
+  };
+  const handleProceedToNext = (proceedToNext,newErrResponses) => {
+    const { currentQuestion, formProgressStep,  flowID,flowName } =state;
 
+    if (proceedToNext) {
+      proceedToNextStep();
+  
+      const eventData = buildEventData(
+        formProgressStep,
+        currentQuestion,
+        flowID,
+        flowName,
+        env.USER_ACTION_CLICK_NEXT
+      );
+      sendImpressions(eventData, env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
+    } else {
+      dispatch({
+        type: actionTypes.SET_ERR_RESPONSES,
+        payload: newErrResponses,
+      });
+    }
+  };
+  const checkFormFileFields = () => {
+    let proceedToNext = true;
+    let nextQuestionCode;
+    const { currentQuestion, responses, formProgressStep } =
+      state;
+    const newErrResponses = {};
+    const subquestions =
+      currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
+      if (currentQuestion.type === "document") {
+        const sub  = subquestions[0]
+        const response = responses[sub.code]?.answer;
+  
+        //fallback to document type or any new type of step.
+       if (sub.element === "checkbox") {
+          if (
+            response === null ||
+            response === undefined ||
+            response === "off" ||
+            response.trim() === ""
+          ) {
+            // console.log('checkbox',response)
+  
+            proceedToNext = false;
+            newErrResponses[sub.code] = true; // Set error for this sub-question
+  
+          }
+        nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+        // console.log('document proceed next,',nextQuestionCode);
+      }
+    }
+    if(proceedToNext){
+      return proceedToNext
+    }else{
+      dispatch({
+        type: actionTypes.SET_ERR_RESPONSES,
+        payload: newErrResponses,
+      });
+    }
+  }
   const moveToNextQuestion = () => {
     let proceedToNext = true;
     let nextQuestionCode;
@@ -107,11 +208,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       subquestions.forEach((sub) => {
         const response = responses[sub.code]?.answer;
         if (sub.element === "input" || sub.element === "free_text") {
-          // console.log("validation input code", sub.validationCode);
-          // console.log("sub.validationCode, response",sub.validationCode, response)
-          // console.log("response input",response)
-          if (!validateField(sub.validationCode, response)) {
-            // console.log("notvalid input",response)
+          if (!sub.code.includes('website') && !validateField(sub.validationCode, response)) {
 
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
@@ -125,22 +222,19 @@ export const QuestionnaireHandlers = (state, dispatch) => {
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
           }
-          // console.log("dropdown/selection proceedToNext", proceedToNext);
         } else if (sub.element === "checkbox") {
           if (
             response === null ||
             response === undefined ||
-            response === "false" ||
+            response === "off" ||
             response.trim() === ""
           ) {
-            // console.log('checkbox',response)
 
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
 
           }
         }else if(sub.element==="birthdate"){
-          // console.log(response);
            if(!Object.keys(response).every(key => response[key] !== '')){
             proceedToNext = false;
             newErrResponses[sub.code] = true; 
@@ -190,60 +284,81 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         proceedToNext = false;
       }
     }
+    else if (currentQuestion.type === "document") {
+      const sub  = subquestions[0]
+      const response = responses[sub.code]?.answer;
 
-    if (proceedToNext) {
-      const currentFormStep = formProgressStep;
-      const totalFormSteps = currentQuestion.formSteps.length;
-      if (currentFormStep < totalFormSteps) {
-        // Move to next form step within the current question
-        // console.log('moving form step')
-        animateAndNavigate(
-          () => {
-            dispatch({
-              type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
-              payload: currentFormStep + 1,
-            });
-          },
-          100, // need to replace this with progress with (old leadgens). for now it does not matter.
-          TIME_DELAY_NEXT_QUESTION
-        );
-      } else {
-        // Move to the next question and reset formProgressStep
-        nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+      //fallback to document type or any new type of step.
+     if (sub.element === "checkbox") {
+        if (
+          response === null ||
+          response === undefined ||
+          response === "off" ||
+          response.trim() === ""
+        ) {
+          // console.log('checkbox',response)
 
-        if (nextQuestionCode) {
-          // console.log('moving question code')
+          proceedToNext = false;
+          newErrResponses[sub.code] = true; // Set error for this sub-question
 
-          animateAndNavigate(
-            () => {
-              // goToNext(nextQuestionCode)
-              dispatch({
-                type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
-                payload: 1,
-              });
-              handleNavigateNextQuestion(nextQuestionCode);
-            },
-            100, // need to replace this with progress with (old leadgens). for now it does not matter.
-            TIME_DELAY_NEXT_QUESTION
-          );
         }
-      }
-      const eventData = buildEventData(
-        formProgressStep,
-        currentQuestion,
-        flowID,
-        flowName,
-        env.USER_ACTION_CLICK_NEXT
-      );
-      sendImpressions(eventData, env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
-      // dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: true });
-    } else {
-      // dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: false });
-      dispatch({
-        type: actionTypes.SET_ERR_RESPONSES,
-        payload: newErrResponses,
-      });
+      nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+      // console.log('document proceed next,',nextQuestionCode);
     }
+  }
+    handleProceedToNext(proceedToNext,newErrResponses);
+    // if (proceedToNext) {
+    //   const currentFormStep = formProgressStep;
+    //   const totalFormSteps = currentQuestion.formSteps.length;
+    //   if (currentFormStep < totalFormSteps) {
+    //     // Move to next form step within the current question
+    //     // console.log('moving form step')
+    //     animateAndNavigate(
+    //       () => {
+    //         dispatch({
+    //           type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+    //           payload: currentFormStep + 1,
+    //         });
+    //       },
+    //       100, // need to replace this with progress with (old leadgens). for now it does not matter.
+    //       TIME_DELAY_NEXT_QUESTION
+    //     );
+    //   } else {
+    //     // Move to the next question and reset formProgressStep
+    //     nextQuestionCode = currentQuestion.answers[0]?.next_question_code;
+
+    //     if (nextQuestionCode) {
+    //       // console.log('moving question code')
+
+    //       animateAndNavigate(
+    //         () => {
+    //           // goToNext(nextQuestionCode)
+    //           dispatch({
+    //             type: actionTypes.UPDATE_FORM_PROGRESS_STEP,
+    //             payload: 1,
+    //           });
+    //           handleNavigateNextQuestion(nextQuestionCode);
+    //         },
+    //         100, // need to replace this with progress with (old leadgens). for now it does not matter.
+    //         TIME_DELAY_NEXT_QUESTION
+    //       );
+    //     }
+    //   }
+    //   const eventData = buildEventData(
+    //     formProgressStep,
+    //     currentQuestion,
+    //     flowID,
+    //     flowName,
+    //     env.USER_ACTION_CLICK_NEXT
+    //   );
+    //   sendImpressions(eventData, env.USER_EVENT_NAME, env.STREAM_STEP_NAME);
+
+    // } else {
+    //   dispatch({
+    //     type: actionTypes.SET_ERR_RESPONSES,
+    //     payload: newErrResponses,
+    //   });
+    // }
   };
 
   const handleNavigateNextQuestion = (nextQuestionCode) => {
@@ -300,6 +415,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
 
         // Check for different input types
         if (sub.element === "input" || sub.element === "free_text" || sub.element==="percentage") {
+          if(sub.code.includes('website')) return true;
           return response && response.answer && response.answer.trim() !== "";
         } 
          else if (sub.element === "dropdown" || sub.element === "selection") {
@@ -487,8 +603,8 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     let selectedAnswer =
       type === "checkbox"
         ? answerIndex == 0
-          ? "false"
-          : "true"
+          ? "on"
+          : "off"
         : subquestions.find((sub) => sub.code === questionCode).answers[
             answerIndex
           ];
@@ -497,7 +613,9 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       step: currentQuestion.step,
       question:
         currentQuestion.type === "details-question" ||
-        currentQuestion.type === "form-type"
+        currentQuestion.type === "form-type" ||
+        currentQuestion.type === "document"
+
           ? subquestions.find((sub) => sub.code === questionCode).text
           : currentQuestion.text,
       answerIndexes: [],
@@ -580,7 +698,31 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       });
     }
   };
-
+  const completeMidForm=()=>{
+    const { responses } = state;
+    let midResponses = {};
+    Object.entries(responses).forEach(([key, value]) => {
+      value.users_answer = value.answer;
+      // if (key === "birth_date") {
+      //   const { day, month, year } = value.answer;
+      //   const monthIndex = new Date(`${month} 1`).getMonth() + 1;
+      //   const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex;
+      //   value.answer = `${day}/${formattedMonth}/${year}`;
+      //   value.users_answer = `${day}/${formattedMonth}/${year}`;
+      // }
+    });
+    midResponses = Object.keys(responses).reduce((acc, key) => {
+      const { answerIndexes, ...responseWithoutIndexes } = responses[key];
+      acc[key] = responseWithoutIndexes;
+      return acc;
+    }, {});
+    sendImpressions(
+      midResponses,
+      env.FIRST_SUBMIT_EVENT_NAME,
+      env.STREAM_FINAL_NAME,
+      env.RIDGE_FORM_ID,
+    );
+  }
   const completeQuestionnaire = useCallback(() => {
     const { responses } = state;
     let finalResponses = {};
@@ -602,18 +744,17 @@ export const QuestionnaireHandlers = (state, dispatch) => {
       return acc;
     }, {});
 
-    // console.log(finalResponses);
-    const ridgeForm = 13;
+     console.log(finalResponses);
     sendImpressions(
       finalResponses,
       env.FINAL_SUBMIT_EVENT_NAME,
-      env.STREAM_FINAL_NAME,
-      ridgeForm
+      env.STREAM_STEP_NAME,
+      env.RIDGE_FORM_ID
     );
-    dispatch({
-      type: actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED,
-      payload: true,
-    });
+    // dispatch({
+    //   type: actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED,
+    //   payload: true,
+    // });
   }, [state.targetFormID, state.responses]);
 
   const changeNextBtnState = (isEnabled) => {
@@ -637,6 +778,9 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     handleSelectionInputChange,
     completeQuestionnaire,
     changeNextBtnState,
-    toggleDropdownPadding
+    toggleDropdownPadding,
+    checkFormFileFields,
+    proceedToNextStep,
+    completeMidForm
   };
 };

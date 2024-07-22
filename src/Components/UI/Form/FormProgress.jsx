@@ -1,10 +1,11 @@
 import React from "react";
 import { useQuestionnaire } from "@/context/QuestionnaireContext.jsx";
 import styles from "./FormProgress.module.css";
+import useIsWideScreen from "@/hooks/useIsWideScreen";
 
 const FormProgress = () => {
   const { currentQuestion, formQuestions,formProgressStep } = useQuestionnaire();
-
+  const isWideScreen = useIsWideScreen()
   const currentStepNumber = formQuestions.find(
     (q) => q.step === currentQuestion.step
   )?.step;
@@ -27,6 +28,12 @@ const FormProgress = () => {
 
     return lines;
   };
+  const adjustTextForMobile = (text) => {
+    //  if (!isWideScreen) {
+    //    return text.replace(/information/gi, 'info');
+    //  }
+    return text;
+  };
 
   return (
     <div
@@ -37,7 +44,7 @@ const FormProgress = () => {
         {formQuestions.map((question) => (
           <div key={question.code} className={`${styles.formProgressItem}`}>
             <p>
-              {question.step} - {question.text}
+            {question.step} -{!isWideScreen && <br />} {adjustTextForMobile(question.text)}
             </p>
             <div className={styles.progressLineContainer}>
               {renderProgressLines(question)}
