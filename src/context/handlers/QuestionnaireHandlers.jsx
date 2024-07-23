@@ -4,13 +4,14 @@ import { useCallback } from "react";
 import { validateField } from "@/utils/validationUtils";
 import { gsap } from "gsap";
 import questionnaireData from "@/utils/data/questionnaire/index";
-import { submitFiles } from "@/utils/data/files/index.js";
+
+import { areResponsesDifferent } from "@/utils/data/questionnaire/index.js";
 import {
   buildEventData,
   sendImpressions,
 } from "@/utils/impression/impressionUtils";
 
-import { chooseBrand } from "@/utils/scoring/newScoring.js";
+
 
 import env from "@/utils/data/env";
 
@@ -235,6 +236,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
 
           }
         }else if(sub.element==="birthdate"){
+          // console.log('next question move response ', response);
            if(!Object.keys(response).every(key => response[key] !== '')){
             proceedToNext = false;
             newErrResponses[sub.code] = true; 
@@ -247,7 +249,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
             response === undefined ||
             response.trim() === ""
           ) {
-             console.log('percentage',response)
+            //  console.log('percentage',response)
 
             proceedToNext = false;
             newErrResponses[sub.code] = true; // Set error for this sub-question
@@ -535,10 +537,11 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     }
   };
   const handleDateChange = (questionCode, type, inputValue, inputIndex) => {
+    // console.log('date type',type);
     const { currentQuestion, responses,errResponses, formProgressStep } = state;
     const subquestions =
       currentQuestion.formSteps?.[formProgressStep - 1].subquestions;
-
+// console.log('handle date change');
     const currentResponse = responses[questionCode] || {
       step: currentQuestion.step,
       question:
@@ -554,11 +557,13 @@ export const QuestionnaireHandlers = (state, dispatch) => {
         year: "",
       },
     };
+    // console.log("currentResponse",currentResponse);
+    // console.log("inputValue",inputValue);
+
     // Update the specific type (day, month, or year) in the answer
-    const updatedAnswer = {
-      ...currentResponse.answer,
-      [type]: inputValue,
-    };
+    const answerToUpdate = currentResponse.dob_answer || currentResponse.answer;
+      answerToUpdate[type] = inputValue;
+    //  console.log('updated answer',answerToUpdate)
     // Update the answerIndexes based on the type
     const updatedAnswerIndexes = [...currentResponse.answerIndexes];
     if (type === "day") {
@@ -571,7 +576,7 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     // Update the response with the new answer
     const updatedResponse = {
       ...currentResponse,
-      answer: updatedAnswer,
+      answer: answerToUpdate,
       answerIndexes: updatedAnswerIndexes,
     };
 
@@ -600,11 +605,12 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     const { currentQuestion, responses,errResponses, formProgressStep } = state;
     const subquestions =
       currentQuestion.formSteps[formProgressStep - 1].subquestions;
+      // console.log('answer index,',answerIndex);
     let selectedAnswer =
       type === "checkbox"
-        ? answerIndex == 0
-          ? "on"
-          : "off"
+        ? answerIndex === 0
+          ? "off"
+          : "on"
         : subquestions.find((sub) => sub.code === questionCode).answers[
             answerIndex
           ];
@@ -699,63 +705,80 @@ export const QuestionnaireHandlers = (state, dispatch) => {
     }
   };
   const completeMidForm=()=>{
-    const { responses } = state;
-    let midResponses = {};
-    Object.entries(responses).forEach(([key, value]) => {
-      value.users_answer = value.answer;
-      // if (key === "birth_date") {
-      //   const { day, month, year } = value.answer;
-      //   const monthIndex = new Date(`${month} 1`).getMonth() + 1;
-      //   const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex;
-      //   value.answer = `${day}/${formattedMonth}/${year}`;
-      //   value.users_answer = `${day}/${formattedMonth}/${year}`;
-      // }
-    });
-    midResponses = Object.keys(responses).reduce((acc, key) => {
-      const { answerIndexes, ...responseWithoutIndexes } = responses[key];
-      acc[key] = responseWithoutIndexes;
-      return acc;
+    const { responses ,midFormResponses} = state;
+  const relevantKeys = ['privacy_consent', 'annual_revenue', 'phone', 'email', 'full_name'];
+  let midResponses = {};
+
+  // Filter responses to only include relevant keys
+  const filteredResponses = Object.keys(responses)
+    .filter(key => relevantKeys.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = responses[key];
+      return obj;
     }, {});
+  // Adjust the filtered responses
+  Object.entries(filteredResponses).forEach(([key, value]) => {
+    value.users_answer = value.answer;
+  });
+
+  // Remove answerIndexes from filtered responses
+  midResponses = Object.keys(filteredResponses).reduce((acc, key) => {
+    const { answerIndexes, ...responseWithoutIndexes } = filteredResponses[key];
+    acc[key] = responseWithoutIndexes;
+    return acc;
+  }, {});
+  if (areResponsesDifferent(midFormResponses, midResponses)) {
     sendImpressions(
       midResponses,
       env.FIRST_SUBMIT_EVENT_NAME,
       env.STREAM_FINAL_NAME,
       env.RIDGE_FORM_ID,
     );
+    dispatch({ type: actionTypes.SET_FIRST_RESPONSES_FORM, payload: midResponses });
+
   }
-  const completeQuestionnaire = useCallback(() => {
-    const { responses } = state;
+  
+  }
+  const completeQuestionnaire = () => {
+    const { responses,fullFormResponses } = state;
     let finalResponses = {};
+
+    // console.log('final responses complete before birth_date change');
+    // console.log('responses',responses);
     Object.entries(responses).forEach(([key, value]) => {
       value.users_answer = value.answer;
       if (key === "birth_date") {
-        const { day, month, year } = value.answer;
+        
+        const { day, month, year } = value.dob_answer || value.answer;
+        // console.log('in dob:',day,month,year);
         const monthIndex = new Date(`${month} 1`).getMonth() + 1;
         const formattedMonth = monthIndex < 10 ? `0${monthIndex}` : monthIndex;
+        value.dob_answer= value.dob_answer || value.answer;
         value.answer = `${day}/${formattedMonth}/${year}`;
         value.users_answer = `${day}/${formattedMonth}/${year}`;
       }
     });
-    const selectedBrand = chooseBrand(responses);
-    // console.log("selectedBrand",selectedBrand)
+  
     finalResponses = Object.keys(responses).reduce((acc, key) => {
-      const { answerIndexes, ...responseWithoutIndexes } = responses[key];
+      const { answerIndexes,dob_answer, ...responseWithoutIndexes } = responses[key];
       acc[key] = responseWithoutIndexes;
       return acc;
     }, {});
 
-     console.log(finalResponses);
-    sendImpressions(
-      finalResponses,
-      env.FINAL_SUBMIT_EVENT_NAME,
-      env.STREAM_STEP_NAME,
-      env.RIDGE_FORM_ID
-    );
-    // dispatch({
-    //   type: actionTypes.TOGGLE_QUESTIONNAIRE_COMPLETED,
-    //   payload: true,
-    // });
-  }, [state.targetFormID, state.responses]);
+    if (areResponsesDifferent(fullFormResponses, finalResponses)) {
+    // console.log('different changing responses fullform');
+
+      sendImpressions(
+        finalResponses,
+        env.FINAL_SUBMIT_EVENT_NAME,
+        env.STREAM_STEP_NAME,
+        env.RIDGE_FORM_ID
+      );
+      dispatch({ type: actionTypes.SET_FINAL_RESPONSES, payload: finalResponses });
+
+    }
+    
+  }
 
   const changeNextBtnState = (isEnabled) => {
     dispatch({ type: actionTypes.CHANGE_NEXT_BTN_STATE, isEnabled: isEnabled });

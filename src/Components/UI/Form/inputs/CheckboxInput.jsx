@@ -5,7 +5,9 @@ import selectedSvg from "@/images/selectedcheckbox.svg?url";
 import unselectedSvg from "@/images/unselectedcheckbox.svg?url";
 import InputError from "./InputError";
 const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError,marginTop=null }) => {
-  const [isSelected, setIsSelected] = useState(isChecked);
+  const initialChecked = isChecked !== undefined ? isChecked : 0;
+
+  const [isSelected, setIsSelected] = useState(initialChecked === 1);
   const { handleSelectionInputChange,currentQuestion } = useQuestionnaire();
   const [error, setError] = useState(isError);
 
@@ -16,7 +18,7 @@ const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError,marginTop
     setIsSelected((prevState) => !prevState);
     handleSelectionInputChange(
       subQuestion.code,
-      !isSelected ? 0 : 1,
+      isSelected ? 0 : 1,
       subQuestion.element
     );
   };

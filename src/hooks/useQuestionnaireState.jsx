@@ -48,5 +48,5 @@ export const useQuestionnaireState = (state,dispatch,completeMidForm,completeQue
                 
             }
         }
-    }, [currentQuestion, currentQuestionCode, formProgressStep, dispatch, completeQuestionnaire]);
+    }, [currentQuestion, currentQuestionCode, formProgressStep, dispatch]);
 };

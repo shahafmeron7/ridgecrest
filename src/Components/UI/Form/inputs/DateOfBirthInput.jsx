@@ -26,7 +26,7 @@ const DateOfBirthInput = ({ selectedAnswerIndexes ,isError,errorMessage}) => {
   );
   const [days, setDays] = useState(generateDays(1, 1920)); // Initialize with January and year 2006
 
-  const { handleDateChange } = useQuestionnaire();
+  // const { handleDateChange } = useQuestionnaire();
   const months = isWideScreen ? generateMonths() : generateMonthsMobile();
   const years = generateYears(1920, 2006);
   useEffect(() => {

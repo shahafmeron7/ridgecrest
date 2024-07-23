@@ -11,7 +11,6 @@ export const initialState = () => {
   );
   const flowID = questionnaireData.flow_id;
   const flowName = questionnaireData.flow_name;
-  // const paramsResponses = isRedirectParams()
   return {
     currentQuestion: currentQuestion || {},
     formQuestions: formQuestions || {},
@@ -19,6 +18,8 @@ export const initialState = () => {
     questionHistory: [initialQuestionCode],
     isAnimatingOut: false,
     responses: {},
+    midFormResponses: {},
+    fullFormResponses:{},
     errResponses: {},
     questionnaireStarted: false,
     questionnaireCompleted: false,
@@ -93,7 +94,22 @@ export function reducer(state, action) {
       
 
       };
-   
+  case actionTypes.SET_FIRST_RESPONSES_FORM:
+    return {
+     ...state,
+     midFormResponses:{
+      ...state.midFormResponses,
+      ...action.payload
+     }    
+    }
+   case actionTypes.SET_FINAL_RESPONSES:
+    return {
+      ...state,
+      fullFormResponses: {
+           ...state.fullFormResponses,
+          ...action.payload,
+      }
+    }
     case actionTypes.SET_ERR_RESPONSES:
       return {
         ...state,

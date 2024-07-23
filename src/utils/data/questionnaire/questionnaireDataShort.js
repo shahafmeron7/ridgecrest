@@ -280,7 +280,7 @@ const questionnaireDataShort = {
                text: "Business address",
                type: "text",
                code: "business_address",
-               example: "E.g: 23 Street NY",
+               example: "E.g: 10456 West Industry Drive",
                error: "Please enter a valid address",
                element: "input",
                validationCode: validationCodes["business_address"],
