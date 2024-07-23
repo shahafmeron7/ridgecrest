@@ -20,6 +20,7 @@ const DetailsQuestion = () => {
     responsesUpdated
   } = useQuestionnaire();
   const isWideScreen = useIsWideScreen();
+  
   // useEffect(() => {
   //   // Force a re-render by using responsesUpdated
   //   console.log('responsesUpdated in details');

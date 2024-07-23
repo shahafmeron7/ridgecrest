@@ -41,8 +41,8 @@ const CheckboxInput = ({ subQuestion, isChecked, errorMessage, isError,marginTop
         <p>
         By checking this box, you electronically consent to the Ridge Crest
         Financial Group, LLC{" "}
-        <a href="https://ridgecrestfg.com/terms-of-use/" className={styles.link}>Terms and Conditions</a> and{" "}
-        <a href="https://ridgecrestfg.com/privacy-policy/" className={styles.link}>Privacy policy</a>
+        <a href="https://ridgecrestfg.com/terms-of-use/" className={styles.link} target="_blank">Terms and Conditions</a> and{" "}
+        <a href="https://ridgecrestfg.com/privacy-policy/" className={styles.link} target="_blank">Privacy policy</a>
       </p>
       )}
      

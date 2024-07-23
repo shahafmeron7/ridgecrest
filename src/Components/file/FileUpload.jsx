@@ -4,11 +4,13 @@ import styles from './FileUpload.module.css'
 import UploadIcon from '@/images/UploadIcon.svg?url'
 import pdfIcon from '@/images/pdficon.svg?url'
 import xIcon from '@/images/xicon.svg?url'
+import useIsWideScreen from "@/hooks/useIsWideScreen";
 
 const FileUpload = ({ index, file, onFileChange,onFileError }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [isFileValid, setIsFileValid] = useState(true);
-  const [error, setError] = useState(null);
+
+  const isWideScreen = useIsWideScreen();
+
   const fileInputRef = useRef(null);
   const MAX_MB = 0.5;
   const MAX_FILE_SIZE = MAX_MB * 1024 * 1024;
@@ -111,8 +113,15 @@ const FileUpload = ({ index, file, onFileChange,onFileError }) => {
           <div className={styles.instructions}>
             <img src={UploadIcon} alt="upload icon" width="28" height="28" />
             <div className={styles.placeholder}>
+            {isWideScreen && (
+              <>
+
               <span>Drag and drop your file here</span>
               <span>or</span>
+
+              </>
+            )
+            }
               <span className={styles.uploadLink} style={{fontWeight:"500"}}>Upload Files</span>
             </div>
           </div>

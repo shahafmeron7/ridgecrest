@@ -42,7 +42,7 @@ const DocumentQuestion = () => {
               
             </div>
             <p>
-               See RCFG's <a href="https://ridgecrestfg.com/privacy-policy/">Privacy Policy</a> for more information.
+               See RCFG's <a href="https://ridgecrestfg.com/privacy-policy/" target="_blank">Privacy Policy</a> for more information.
                </p>
             <p>To delete and/or disconnect your account information or any other information collected by RCFG, LLC please send an email to <a  href="mailto:admin@ridgecrestfg.com">admin@ridgecrestfg.com</a>.</p>
       </div>
